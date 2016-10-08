@@ -1,30 +1,12 @@
-#include "QtEmbedGlutWindow.h"
+#include "QtOpenGLEmbedWindow.h"
 #include "ofBaseApp.h"
 #include "ofConstants.h"
 #include "ofPixels.h"
 #include "ofGLRenderer.h"
 
-#ifdef TARGET_WIN32
-	#if (_MSC_VER) 
-		#define GLUT_BUILDING_LIB
-		#include "glut.h"
-	#else
-		#include <GL/glut.h>
-		#include <GL/freeglut_ext.h>
-	#endif
-#endif
-#ifdef TARGET_OSX
-    #include <OpenGL/OpenGL.h>
-	#include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
-    #include <Cocoa/Cocoa.h>
-#endif
-#ifdef TARGET_LINUX
-	#include <GL/glut.h>
-	#include "ofIcon.h"
-	#include "ofImage.h"
-	#include <X11/Xatom.h>
-	#include <GL/freeglut_ext.h>
-#endif
+#include "ofIcon.h"
+#include "ofImage.h"
+#include <X11/Xatom.h>
 
 
 // glut works with static callbacks UGH, so we need static variables here:
@@ -43,128 +25,11 @@ static int			windowW;
 static int			windowH;
 static int          nFramesSinceWindowResized;
 static ofOrientation	orientation;
-static QtEmbedGlutWindow * instance;
-
-#ifdef TARGET_WIN32
-
-//------------------------------------------------
-
-// this is to fix a bug with glut that doesn't properly close the app
-// with window closing.  we grab the window procedure, store it, and parse windows messages,
-// using the close and destroy messages and passing on the others...
-
-//------------------------------------------------
-
-static WNDPROC currentWndProc;
-static HWND handle  = nullptr;
-
-// This function takes in a wParam from the WM_DROPFILES message and
-// prints all the files to a message box.
-
-void HandleFiles(WPARAM wParam)
-{
-    // DragQueryFile() takes a LPWSTR for the name so we need a TCHAR string
-    TCHAR szName[MAX_PATH];
-
-    // Here we cast the wParam as a HDROP handle to pass into the next functions
-    HDROP hDrop = (HDROP)wParam;
-
-	POINT pt;
-	DragQueryPoint(hDrop, &pt);
-	//ofLogNotice("QtEmbedGlutWindow") << "drag point: " << pt.x << pt.y;
-
-	ofDragInfo info;
-	info.position.x = pt.x;
-	info.position.y = pt.y;
-
-
-    // This functions has a couple functionalities.  If you pass in 0xFFFFFFFF in
-    // the second parameter then it returns the count of how many filers were drag
-    // and dropped.  Otherwise, the function fills in the szName string array with
-    // the current file being queried.
-    int count = DragQueryFile(hDrop, 0xFFFFFFFF, szName, MAX_PATH);
-
-    // Here we go through all the files that were drag and dropped then display them
-    for(int i = 0; i < count; i++)
-    {
-        // Grab the name of the file associated with index "i" in the list of files dropped.
-        // Be sure you know that the name is attached to the FULL path of the file.
-        DragQueryFile(hDrop, i, szName, MAX_PATH);
-
-		wchar_t * s =  (wchar_t*)szName;
-		char dfault = '?';
-        const std::locale& loc = std::locale();
-		std::ostringstream stm;
-		while( *s != L'\0' ) {
-			stm << std::use_facet< std::ctype<wchar_t> >( loc ).narrow( *s++, dfault );
-		}
-		info.files.push_back(string(stm.str()));
-
-			//toUTF8(udispName, dispName);
-
-        // Bring up a message box that displays the current file being processed
-        //MessageBox(GetForegroundWindow(), szName, L"Current file received", MB_OK);
-    }
-
-    // Finally, we destroy the HDROP handle so the extra memory
-    // allocated by the application is released.
-    DragFinish(hDrop);
-
-	instance->events().notifyDragEvent(info);
-
-}
-
-
-static LRESULT CALLBACK winProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam){
-
-   //we catch close and destroy messages
-   //and send them to OF
-
-   switch(Msg){
-
-      case WM_CLOSE:
-         OF_EXIT_APP(0);
-      break;
-      case WM_DESTROY:
-         OF_EXIT_APP(0);
-         break;
-	  case WM_DROPFILES:
-
-            // Call our function we created to display all the files.
-            // We pass the wParam because it's the HDROP handle.
-            HandleFiles(wParam);
-            break;
-      default:
-         return CallWindowProc(currentWndProc, handle, Msg, wParam, lParam);
-      break;
-    }
-
-    return 0;
-}
-
-//--------------------------------------
-static void fixCloseWindowOnWin32(){
-
-	//get the HWND
-	handle = WindowFromDC(wglGetCurrentDC());
-
-	// enable drag and drop of files.
-	DragAcceptFiles (handle, TRUE);
-
-	//store the current message event handler for the window
-	currentWndProc = (WNDPROC)GetWindowLongPtr(handle, GWLP_WNDPROC);
-
-	//tell the window to now use our event handler!
-	SetWindowLongPtr(handle, GWLP_WNDPROC, (LONG_PTR)winProc);
-}
-
-#endif
-
-
+static QtOpenGLEmbedWindow * instance;
 
 
 //----------------------------------------------------------
-QtEmbedGlutWindow::QtEmbedGlutWindow(){
+QtOpenGLEmbedWindow::QtOpenGLEmbedWindow(){
 	windowMode			= OF_WINDOW;
 	bNewScreenMode		= true;
 	nFramesSinceWindowResized = 0;
@@ -186,45 +51,45 @@ QtEmbedGlutWindow::QtEmbedGlutWindow(){
 // "rgba double samples>=4 depth" ( mac )
 // "rgb double depth alpha samples>=4" ( some pcs )
 //------------------------------------------------------------
- void QtEmbedGlutWindow::setGlutDisplayString(string displayStr){
+ void QtOpenGLEmbedWindow::setGlutDisplayString(string displayStr){
 	displayString = displayStr;
  }
 
  //------------------------------------------------------------
-void QtEmbedGlutWindow::setDoubleBuffering(bool _bDoubleBuffered){ 
+void QtOpenGLEmbedWindow::setDoubleBuffering(bool _bDoubleBuffered){ 
 	bDoubleBuffered = _bDoubleBuffered;
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::setup(const ofGLWindowSettings & settings){
+void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & settings){
 
 	int argc = 1;
 	char *argv = (char*)"openframeworks";
 	char **vptr = &argv;
-	glutInit(&argc, vptr);
+//	glutInit(&argc, vptr);
 
-	if( displayString != ""){
-		glutInitDisplayString( displayString.c_str() );
-	}else{
-		if(bDoubleBuffered){  
-			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
-		}else{
-			glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE | GLUT_DEPTH | GLUT_ALPHA );
-		}
-	}
+//	if( displayString != ""){
+//		glutInitDisplayString( displayString.c_str() );
+//	}else{
+//		if(bDoubleBuffered){  
+//			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+//		}else{
+//			glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE | GLUT_DEPTH | GLUT_ALPHA );
+//		}
+//	}
 
 	windowMode = settings.windowMode;
 	bNewScreenMode = true;
 
 	if (windowMode == OF_FULLSCREEN){
-		glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
-		windowId = glutCreateWindow("");
+//		glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
+//		windowId = glutCreateWindow("");
 		
 		requestedWidth  = settings.width;
 		requestedHeight = settings.height;
-	} else if (windowMode != OF_GAME_MODE){
-		glutInitWindowSize(settings.width, settings.height);
-		windowId = glutCreateWindow("");
+//	} else if (windowMode != OF_GAME_MODE){
+//		glutInitWindowSize(settings.width, settings.height);
+//		windowId = glutCreateWindow("");
 
 		/*
 		ofBackground(200,200,200);		// default bg color
@@ -236,29 +101,29 @@ void QtEmbedGlutWindow::setup(const ofGLWindowSettings & settings){
 		// as default works the best...
 		*/
 
-		requestedWidth  = glutGet(GLUT_WINDOW_WIDTH);
-		requestedHeight = glutGet(GLUT_WINDOW_HEIGHT);
+//		requestedWidth  = glutGet(GLUT_WINDOW_WIDTH);
+//		requestedHeight = glutGet(GLUT_WINDOW_HEIGHT);
 	} else {
-		if( displayString != ""){
-			glutInitDisplayString( displayString.c_str() );
-		}else{
-			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
-		}
+//		if( displayString != ""){
+//			glutInitDisplayString( displayString.c_str() );
+//		}else{
+//			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
+//		}
 
     	// w x h, 32bit pixel depth, 60Hz refresh rate
 		char gameStr[64];
 		sprintf( gameStr, "%dx%d:%d@%d", settings.width, settings.height, 32, 60 );
 
-    	glutGameModeString(gameStr);
+//    	glutGameModeString(gameStr);
 
-    	if (!glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)){
-    		ofLogError("QtEmbedGlutWindow") << "setupOpenGL(): selected game mode format " << gameStr << " not available";
-    	}
+//    	if (!glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)){
+//    		ofLogError("QtOpenGLEmbedWindow") << "setupOpenGL(): selected game mode format " << gameStr << " not available";
+//    	}
     	// start fullscreen game mode
-    	windowId = glutEnterGameMode();
+//    	windowId = glutEnterGameMode();
 	}
-	windowW = glutGet(GLUT_WINDOW_WIDTH);
-	windowH = glutGet(GLUT_WINDOW_HEIGHT);
+//	windowW = glutGet(GLUT_WINDOW_WIDTH);
+//	windowH = glutGet(GLUT_WINDOW_HEIGHT);
 
 	currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
 
@@ -280,34 +145,28 @@ void QtEmbedGlutWindow::setup(const ofGLWindowSettings & settings){
     //----------------------
     // setup the callbacks
 
-    glutMouseFunc(mouse_cb);
-    glutMotionFunc(motion_cb);
-    glutPassiveMotionFunc(passive_motion_cb);
-    glutIdleFunc(idle_cb);
-    glutDisplayFunc(display);
-
-    glutKeyboardFunc(keyboard_cb);
-    glutKeyboardUpFunc(keyboard_up_cb);
-    glutSpecialFunc(special_key_cb);
-    glutSpecialUpFunc(special_key_up_cb);
-
-    glutReshapeFunc(resize_cb);
-	glutEntryFunc(entry_cb);
-#ifdef TARGET_LINUX
-	glutCloseFunc(exit_cb);
-#endif
-
-#ifdef TARGET_OSX
-	glutDragEventFunc(dragEvent);
-#endif
+//    glutMouseFunc(mouse_cb);
+//    glutMotionFunc(motion_cb);
+//    glutPassiveMotionFunc(passive_motion_cb);
+//    glutIdleFunc(idle_cb);
+//    glutDisplayFunc(display);
+//
+//    glutKeyboardFunc(keyboard_cb);
+//    glutKeyboardUpFunc(keyboard_up_cb);
+//    glutSpecialFunc(special_key_cb);
+//    glutSpecialUpFunc(special_key_up_cb);
+//
+//    glutReshapeFunc(resize_cb);
+//	glutEntryFunc(entry_cb);
+//#ifdef TARGET_LINUX
+//	glutCloseFunc(exit_cb);
+//#endif
+//
+//#ifdef TARGET_OSX
+//	glutDragEventFunc(dragEvent);
+//#endif
 
     nFramesSinceWindowResized = 0;
-
-    #ifdef TARGET_WIN32
-        //----------------------
-        // this is specific to windows (respond properly to close / destroy)
-        fixCloseWindowOnWin32();
-    #endif
 
 #ifdef TARGET_LINUX
     if(!iconSet){
@@ -335,14 +194,14 @@ void QtEmbedGlutWindow::setup(const ofGLWindowSettings & settings){
 
 #ifdef TARGET_LINUX
 //------------------------------------------------------------
-void QtEmbedGlutWindow::setWindowIcon(const string & path){
+void QtOpenGLEmbedWindow::setWindowIcon(const string & path){
     ofPixels iconPixels;
 	ofLoadImage(iconPixels,path);
 	setWindowIcon(iconPixels);
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::setWindowIcon(const ofPixels & iconPixels){
+void QtOpenGLEmbedWindow::setWindowIcon(const ofPixels & iconPixels){
 	iconSet = true;
 	Display *m_display = glXGetCurrentDisplay();
 	GLXDrawable m_window = glXGetCurrentDrawable();
@@ -366,47 +225,47 @@ void QtEmbedGlutWindow::setWindowIcon(const ofPixels & iconPixels){
 #endif
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::update(){
+void QtOpenGLEmbedWindow::update(){
 	idle_cb();
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::draw(){
+void QtOpenGLEmbedWindow::draw(){
 	display();
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::close(){
+void QtOpenGLEmbedWindow::close(){
 	events().notifyExit();
 	events().disable();
-#ifdef TARGET_LINUX
-	glutLeaveMainLoop();
-#else
-	std::exit(0);
-#endif
+//#ifdef TARGET_LINUX
+//	glutLeaveMainLoop();
+//#else
+//	std::exit(0);
+//#endif
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::loop(){
+void QtOpenGLEmbedWindow::loop(){
 	instance->events().notifySetup();
 	instance->events().notifyUpdate();
-	glutMainLoop();
+//	glutMainLoop();
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::setWindowTitle(string title){
-	glutSetWindowTitle(title.c_str());
+void QtOpenGLEmbedWindow::setWindowTitle(string title){
+//	glutSetWindowTitle(title.c_str());
 }
 
 //------------------------------------------------------------
-ofPoint QtEmbedGlutWindow::getWindowSize(){
+ofPoint QtOpenGLEmbedWindow::getWindowSize(){
 	return ofPoint(windowW, windowH,0);
 }
 
 //------------------------------------------------------------
-ofPoint QtEmbedGlutWindow::getWindowPosition(){
-	int x = glutGet(GLUT_WINDOW_X);
-	int y = glutGet(GLUT_WINDOW_Y);
+ofPoint QtOpenGLEmbedWindow::getWindowPosition(){
+	int x = 0;//glutGet(GLUT_WINDOW_X);
+	int y = 0;//glutGet(GLUT_WINDOW_Y);
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return ofPoint(x,y,0);
 	}else{
@@ -415,9 +274,9 @@ ofPoint QtEmbedGlutWindow::getWindowPosition(){
 }
 
 //------------------------------------------------------------
-ofPoint QtEmbedGlutWindow::getScreenSize(){
-	int width = glutGet(GLUT_SCREEN_WIDTH);
-	int height = glutGet(GLUT_SCREEN_HEIGHT);
+ofPoint QtOpenGLEmbedWindow::getScreenSize(){
+	int width = 500;//glutGet(GLUT_SCREEN_WIDTH);
+	int height = 500;//glutGet(GLUT_SCREEN_HEIGHT);
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return ofPoint(width, height,0);
 	}else{
@@ -426,7 +285,7 @@ ofPoint QtEmbedGlutWindow::getScreenSize(){
 }
 
 //------------------------------------------------------------
-int QtEmbedGlutWindow::getWidth(){
+int QtOpenGLEmbedWindow::getWidth(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return windowW;
 	}
@@ -434,7 +293,7 @@ int QtEmbedGlutWindow::getWidth(){
 }
 
 //------------------------------------------------------------
-int QtEmbedGlutWindow::getHeight(){
+int QtOpenGLEmbedWindow::getHeight(){
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return windowH;
 	}
@@ -442,53 +301,53 @@ int QtEmbedGlutWindow::getHeight(){
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::setOrientation(ofOrientation orientationIn){
+void QtOpenGLEmbedWindow::setOrientation(ofOrientation orientationIn){
 	orientation = orientationIn;
 }
 
 //------------------------------------------------------------
-ofOrientation QtEmbedGlutWindow::getOrientation(){
+ofOrientation QtOpenGLEmbedWindow::getOrientation(){
 	return orientation;
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::setWindowPosition(int x, int y){
-	glutPositionWindow(x,y);
+void QtOpenGLEmbedWindow::setWindowPosition(int x, int y){
+	//glutPositionWindow(x,y);
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::setWindowShape(int w, int h){
-	glutReshapeWindow(w, h);
+void QtOpenGLEmbedWindow::setWindowShape(int w, int h){
+//	glutReshapeWindow(w, h);
 	// this is useful, esp if we are in the first frame (setup):
 	requestedWidth  = w;
 	requestedHeight = h;
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::hideCursor(){
+void QtOpenGLEmbedWindow::hideCursor(){
 	#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
 		 CGDisplayHideCursor(0);
 	#else
-		glutSetCursor(GLUT_CURSOR_NONE);
+//		glutSetCursor(GLUT_CURSOR_NONE);
 	#endif
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::showCursor(){
+void QtOpenGLEmbedWindow::showCursor(){
 	#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
 		 CGDisplayShowCursor(0);
 	#else
-		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+//		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 	#endif
 }
 
 //------------------------------------------------------------
-ofWindowMode QtEmbedGlutWindow::getWindowMode(){
+ofWindowMode QtOpenGLEmbedWindow::getWindowMode(){
 	return windowMode;
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::toggleFullscreen(){
+void QtOpenGLEmbedWindow::toggleFullscreen(){
 	if( windowMode == OF_GAME_MODE)return;
 
 	if( windowMode == OF_WINDOW ){
@@ -501,7 +360,7 @@ void QtEmbedGlutWindow::toggleFullscreen(){
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::setFullscreen(bool fullscreen){
+void QtOpenGLEmbedWindow::setFullscreen(bool fullscreen){
     if( windowMode == OF_GAME_MODE)return;
 
     if(fullscreen && windowMode != OF_FULLSCREEN){
@@ -514,33 +373,18 @@ void QtEmbedGlutWindow::setFullscreen(bool fullscreen){
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::enableSetupScreen(){
+void QtOpenGLEmbedWindow::enableSetupScreen(){
 	bEnableSetupScreen = true;
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::disableSetupScreen(){
+void QtOpenGLEmbedWindow::disableSetupScreen(){
 	bEnableSetupScreen = false;
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::setVerticalSync(bool bSync){
+void QtOpenGLEmbedWindow::setVerticalSync(bool bSync){
 	//----------------------------
-	#ifdef TARGET_WIN32
-	//----------------------------
-		if (bSync) {
-			if (WGL_EXT_swap_control) {
-				wglSwapIntervalEXT (1);
-			}
-		} else {
-			if (WGL_EXT_swap_control) {
-				wglSwapIntervalEXT (0);
-			}
-		}
-	//----------------------------
-	#endif
-	//----------------------------
-
 	//--------------------------------------
 	#ifdef TARGET_OSX
 	//--------------------------------------
@@ -575,17 +419,17 @@ void QtEmbedGlutWindow::setVerticalSync(bool bSync){
 }
 
 //------------------------------------------------------------
-ofCoreEvents & QtEmbedGlutWindow::events(){
+ofCoreEvents & QtOpenGLEmbedWindow::events(){
 	return coreEvents;
 }
 
 //------------------------------------------------------------
-shared_ptr<ofBaseRenderer> & QtEmbedGlutWindow::renderer(){
+shared_ptr<ofBaseRenderer> & QtOpenGLEmbedWindow::renderer(){
 	return currentRenderer;
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::display(void){
+void QtOpenGLEmbedWindow::display(void){
 
 	//--------------------------------
 	// when I had "glutFullScreen()"
@@ -601,11 +445,11 @@ void QtEmbedGlutWindow::display(void){
 
 				//----------------------------------------------------
 				// before we go fullscreen, take a snapshot of where we are:
-				nonFullScreenX = glutGet(GLUT_WINDOW_X);
-				nonFullScreenY = glutGet(GLUT_WINDOW_Y);
+				nonFullScreenX = 0;//glutGet(GLUT_WINDOW_X);
+				nonFullScreenY = 0;//glutGet(GLUT_WINDOW_Y);
 				//----------------------------------------------------
 
-				glutFullScreen();
+				//glutFullScreen();
 
 				#ifdef TARGET_OSX
 					[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
@@ -618,14 +462,14 @@ void QtEmbedGlutWindow::display(void){
 
 			}else if( windowMode == OF_WINDOW ){
 
-				glutReshapeWindow(requestedWidth, requestedHeight);
+				//glutReshapeWindow(requestedWidth, requestedHeight);
 
 				//----------------------------------------------------
 				// if we have recorded the screen posion, put it there
 				// if not, better to let the system do it (and put it where it wants)
-				if (instance->events().getFrameNum() > 0){
-					glutPositionWindow(nonFullScreenX,nonFullScreenY);
-				}
+				//if (instance->events().getFrameNum() > 0){
+				//	glutPositionWindow(nonFullScreenX,nonFullScreenY);
+				//}
 				//----------------------------------------------------
 
 				#ifdef TARGET_OSX
@@ -649,15 +493,17 @@ void QtEmbedGlutWindow::display(void){
         if (nFramesSinceWindowResized < 3){
             instance->currentRenderer->clear();
         } else {
-            if ( (instance->events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
-            else  glFlush();
+ //           if ( (instance->events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
+ //           else  glFlush();
+              glFlush();
         }
     } else {
-        if(bDoubleBuffered){
-			glutSwapBuffers();
-		} else{
-			glFlush();
-		}
+        //if(bDoubleBuffered){
+	//		glutSwapBuffers();
+	//	} else{
+	//		glFlush();
+	//	}
+              glFlush();
     }
     #else
 		if (instance->currentRenderer->getBackgroundAuto() == false){
@@ -666,11 +512,12 @@ void QtEmbedGlutWindow::display(void){
 				instance->currentRenderer->clear();
 			}
 		}
-		if(bDoubleBuffered){
-			glutSwapBuffers();
-		} else{
-			glFlush();
-		}
+	//	if(bDoubleBuffered){
+	//		glutSwapBuffers();
+	//	} else{
+	//		glFlush();
+	//	}
+              glFlush();
     #endif
 
 	instance->currentRenderer->finishRender();
@@ -707,35 +554,35 @@ static void rotateMouseXY(ofOrientation orientation, int w, int h, int &x, int &
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::mouse_cb(int button, int state, int x, int y) {
+void QtOpenGLEmbedWindow::mouse_cb(int button, int state, int x, int y) {
 	rotateMouseXY(orientation, instance->getWidth(), instance->getHeight(), x, y);
     
 
-	switch(button){
-	case GLUT_LEFT_BUTTON:
-		button = OF_MOUSE_BUTTON_LEFT;
-		break;
-	case GLUT_RIGHT_BUTTON:
-		button = OF_MOUSE_BUTTON_RIGHT;
-		break;
-	case GLUT_MIDDLE_BUTTON:
-		button = OF_MOUSE_BUTTON_MIDDLE;
-		break;
-	}
+//	switch(button){
+//	case GLUT_LEFT_BUTTON:
+//		button = OF_MOUSE_BUTTON_LEFT;
+//		break;
+//	case GLUT_RIGHT_BUTTON:
+//		button = OF_MOUSE_BUTTON_RIGHT;
+//		break;
+//	case GLUT_MIDDLE_BUTTON:
+//		button = OF_MOUSE_BUTTON_MIDDLE;
+//		break;
+//	}
     
 	if (instance->events().getFrameNum() > 0){
-		if (state == GLUT_DOWN) {
-			instance->events().notifyMousePressed(x, y, button);
-		} else if (state == GLUT_UP) {
-			instance->events().notifyMouseReleased(x, y, button);
-		}
-
+//		if (state == GLUT_DOWN) {
+//			instance->events().notifyMousePressed(x, y, button);
+//		} else if (state == GLUT_UP) {
+//			instance->events().notifyMouseReleased(x, y, button);
+//		}
+//
 		buttonInUse = button;
 	}
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::motion_cb(int x, int y) {
+void QtOpenGLEmbedWindow::motion_cb(int x, int y) {
 	rotateMouseXY(orientation, instance->getWidth(), instance->getHeight(), x, y);
 
 	if (instance->events().getFrameNum() > 0){
@@ -745,7 +592,7 @@ void QtEmbedGlutWindow::motion_cb(int x, int y) {
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::passive_motion_cb(int x, int y) {
+void QtOpenGLEmbedWindow::passive_motion_cb(int x, int y) {
 	rotateMouseXY(orientation, instance->getWidth(), instance->getHeight(), x, y);
 
 	if (instance->events().getFrameNum() > 0){
@@ -754,7 +601,7 @@ void QtEmbedGlutWindow::passive_motion_cb(int x, int y) {
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int dragY){
+void QtOpenGLEmbedWindow::dragEvent(char ** names, int howManyFiles, int dragX, int dragY){
 
 	// TODO: we need position info on mac passed through
 	ofDragInfo info;
@@ -771,35 +618,35 @@ void QtEmbedGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, in
 
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::idle_cb(void) {
+void QtOpenGLEmbedWindow::idle_cb(void) {
 	instance->events().notifyUpdate();
 
-	glutPostRedisplay();
+//	glutPostRedisplay();
 }
 
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
+void QtOpenGLEmbedWindow::keyboard_cb(unsigned char key, int x, int y) {
 	instance->events().notifyKeyPressed(key);
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::keyboard_up_cb(unsigned char key, int x, int y){
+void QtOpenGLEmbedWindow::keyboard_up_cb(unsigned char key, int x, int y){
 	instance->events().notifyKeyReleased(key);
 }
 
 //------------------------------------------------------
-void QtEmbedGlutWindow::special_key_cb(int key, int x, int y) {
+void QtOpenGLEmbedWindow::special_key_cb(int key, int x, int y) {
 	instance->events().notifyKeyPressed(key | OF_KEY_MODIFIER);
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::special_key_up_cb(int key, int x, int y) {
+void QtOpenGLEmbedWindow::special_key_up_cb(int key, int x, int y) {
 	instance->events().notifyKeyReleased(key | OF_KEY_MODIFIER);
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::resize_cb(int w, int h) {
+void QtOpenGLEmbedWindow::resize_cb(int w, int h) {
 	windowW = w;
 	windowH = h;
 
@@ -809,16 +656,16 @@ void QtEmbedGlutWindow::resize_cb(int w, int h) {
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::entry_cb(int state) {
-	if (state == GLUT_ENTERED){
-		instance->events().notifyMouseEntered(instance->events().getMouseX(), instance->events().getMouseY());
-	}else if (state == GLUT_LEFT){
-		instance->events().notifyMouseExited(instance->events().getMouseX(), instance->events().getMouseY());
-	}
+void QtOpenGLEmbedWindow::entry_cb(int state) {
+//	if (state == GLUT_ENTERED){
+//		instance->events().notifyMouseEntered(instance->events().getMouseX(), instance->events().getMouseY());
+//	}else if (state == GLUT_LEFT){
+//		instance->events().notifyMouseExited(instance->events().getMouseX(), instance->events().getMouseY());
+//	}
 }
 
 //------------------------------------------------------------
-void QtEmbedGlutWindow::exit_cb() {
+void QtOpenGLEmbedWindow::exit_cb() {
 	instance->events().notifyExit();
 	instance->events().disable();
 }

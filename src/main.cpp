@@ -3,13 +3,13 @@
 
 //========================================================================
 int main(int argc, char *argv[]){
-        QtEmbedGlutWindow ofWindow; // create a window
+        QtOpenGLEmbedWindow ofWindow; // create a window
 
         // set width, height, mode (OF_WINDOW or OF_FULLSCREEN)
-        ofSetupOpenGL(&ofWindow, 1024, 768, OF_WINDOW);                   // <-------- setup the GL context
+       // ofSetupOpenGL(&ofWindow, 1024, 768, OF_WINDOW);                   // <-------- setup the GL context
 
-        //ofQtAppInterface app(argc, argv); //Qt app 
-        ofQtAppInterface app(argc, argv, &ofWindow); //Qt app 
+        ofQtAppInterface app(argc, argv); //App runs without window...  
+        //ofQtAppInterface app(argc, argv, &ofWindow); //Qt app 
         
         // this kicks off the running of my app
         // can be OF_WINDOW or OF_FULLSCREEN

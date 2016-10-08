@@ -9,13 +9,14 @@
 //class ofPoint;
 class ofBaseApp;
 class ofBaseRenderer;
+class QGLWidget;
 
-class QtEmbedGlutWindow : public ofAppBaseGLWindow {
+class QtOpenGLEmbedWindow : public ofAppBaseGLWindow {
 
 public:
 
-	QtEmbedGlutWindow();
-	~QtEmbedGlutWindow(){}
+	QtOpenGLEmbedWindow();
+	~QtOpenGLEmbedWindow(){}
 
 	int *get_windowId(){return &windowId; }
 	static bool doesLoop(){ return true; }
@@ -64,6 +65,7 @@ public:
 
 	ofCoreEvents & events();
 	shared_ptr<ofBaseRenderer> & renderer();
+        QGLWidget* qgl_window;
 
 private:
 	static void display(void);
