@@ -4,7 +4,6 @@
 //#define GLX_GLXEXT_PROTOTYPES 
 #include <GL/glxext.h>
 #include <GL/glx.h>
-#include <GL/freeglut.h>
 #include <QtOpenGL/QGLWidget>
 
 ofQtAppInterface::ofQtAppInterface(int argc, char *argv[], QtOpenGLEmbedWindow* ofWindow) :
@@ -14,6 +13,8 @@ ofQtAppInterface::ofQtAppInterface(int argc, char *argv[], QtOpenGLEmbedWindow* 
 
     if (ofWindow != NULL){
         embedWidget = ofWindow;
+        //GLXContext glXGetCurrentContext();
+        //Display* currentDisplay = glXGetCurrentDisplay();
         ui->setupUi(mainWindow, (QWidget *) embedWidget->qgl_window);
         embedWidget->qgl_window->show();
     }else{ 
