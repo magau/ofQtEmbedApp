@@ -1,3 +1,4 @@
+
 class QApplication;
 class QMainWindow;
 namespace Ui {

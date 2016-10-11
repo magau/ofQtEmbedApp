@@ -6,10 +6,13 @@
 #include "ofTypes.h"
 #include "ofPixels.h"
 
-//class ofPoint;
+namespace ofqt {
+class ofqtGlWidget;
+}
 class ofBaseApp;
 class ofBaseRenderer;
-class QGLWidget;
+//class ofPoint;
+//class QGLWidget;
 
 class QtOpenGLEmbedWindow : public ofAppBaseGLWindow {
 
@@ -65,7 +68,7 @@ public:
 
 	ofCoreEvents & events();
 	shared_ptr<ofBaseRenderer> & renderer();
-        QGLWidget* qgl_window;
+        ofqt::ofqtGlWidget* qgl_window;
 
 private:
 	static void display(void);

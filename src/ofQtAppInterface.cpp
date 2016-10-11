@@ -1,11 +1,12 @@
 #include <ui_QtEmbedApp.h> 
 #include "ofQtAppInterface.h"
 #include "QtOpenGLEmbedWindow.h"
+#include "ofqtGlWidget.h"
 //#define GLX_GLXEXT_PROTOTYPES 
 #include <GL/glxext.h>
 #include <GL/glx.h>
 #include <GL/freeglut.h>
-#include <QtOpenGL/QGLWidget>
+//#include <QtOpenGL/QGLWidget>
 
 ofQtAppInterface::ofQtAppInterface(int argc, char *argv[], QtOpenGLEmbedWindow* ofWindow) :
                                   app(new QApplication(argc, argv)),

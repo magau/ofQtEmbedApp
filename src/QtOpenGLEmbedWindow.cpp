@@ -8,7 +8,6 @@
 #include "ofImage.h"
 #include <X11/Xatom.h>
 
-
 // glut works with static callbacks UGH, so we need static variables here:
 
 static ofWindowMode windowMode;
