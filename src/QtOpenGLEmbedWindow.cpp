@@ -87,8 +87,6 @@ void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & settings){
 //		}
 //	}
 
-//        QGLFormat format = ofqt::ofqtGlWidget::createOpenGLContextFormat();
-        //format.setVersion(3, 0);
         windowId = createEmbedWindow();
 
 	windowMode = settings.windowMode;
