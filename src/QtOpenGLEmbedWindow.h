@@ -7,10 +7,11 @@
 #include "ofPixels.h"
 
 namespace ofqt {
-class ofqtGlWidget;
+    class ofqtGlWidget;
 }
 class ofBaseApp;
 class ofBaseRenderer;
+class ofQtAppInterface;
 //class ofPoint;
 //class QGLWidget;
 
@@ -21,7 +22,10 @@ public:
 	QtOpenGLEmbedWindow();
 	~QtOpenGLEmbedWindow(){}
 
-	int *get_windowId(){return &windowId; }
+	ofqt::ofqtGlWidget *createEmbedWindow();
+	ofqt::ofqtGlWidget *get_windowId(){ return windowId; };
+	void qtAppInit(int argc, char *argv[]);
+
 	static bool doesLoop(){ return true; }
 	static bool allowsMultiWindow(){ return false; }
 	static void loop();
@@ -68,7 +72,7 @@ public:
 
 	ofCoreEvents & events();
 	shared_ptr<ofBaseRenderer> & renderer();
-        ofqt::ofqtGlWidget* qgl_window;
+        ofQtAppInterface* qtApp;
 
 private:
 	static void display(void);
@@ -94,7 +98,8 @@ private:
 	
 	ofCoreEvents coreEvents;
 	shared_ptr<ofBaseRenderer> currentRenderer;
-	int windowId;
+	//int windowId;
+        ofqt::ofqtGlWidget* windowId;
 };
 
 

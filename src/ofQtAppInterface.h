@@ -5,15 +5,19 @@ namespace Ui {
     class MainWindow;
 }
 class QtOpenGLEmbedWindow;
+namespace ofqt {
+    class ofqtGlWidget;
+}
 
 class ofQtAppInterface{
     private:
     QApplication *app; //Qt app 
     QMainWindow *mainWindow;
-    QtOpenGLEmbedWindow *embedWidget;
     Ui::MainWindow *ui;
     public:
-    ofQtAppInterface(int argc, char *argv[], QtOpenGLEmbedWindow* ofWindow=NULL);
+    ofQtAppInterface(int argc, char *argv[]);
     ~ofQtAppInterface();
+    void show(QtOpenGLEmbedWindow* ofWindow=NULL);
     int exec();
+    ofqt::ofqtGlWidget *createEmbedWindow();
 };

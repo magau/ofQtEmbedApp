@@ -77,7 +77,7 @@ PROJECT_EXTERNAL_SOURCE_PATHS = /usr/include/qt4
 # incorporated directly into the final executable application binary.
 ################################################################################
 # PROJECT_LDFLAGS=-Wl,-rpath=./libs
-USER_LIBS+= -lQtGui -lQtCore
+USER_LIBS+= -lQtGui -lQtCore -lQtOpenGL
 
 ################################################################################
 # PROJECT DEFINES

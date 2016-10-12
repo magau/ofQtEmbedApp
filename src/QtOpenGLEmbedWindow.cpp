@@ -8,6 +8,8 @@
 #include "ofImage.h"
 #include <X11/Xatom.h>
 
+#include "ofQtAppInterface.h"
+
 // glut works with static callbacks UGH, so we need static variables here:
 
 static ofWindowMode windowMode;
@@ -46,6 +48,14 @@ QtOpenGLEmbedWindow::QtOpenGLEmbedWindow(){
 	windowId = 0;
 }
 
+void QtOpenGLEmbedWindow::qtAppInit(int argc, char *argv[]) {
+    qtApp = new ofQtAppInterface(argc, argv);
+}
+
+ofqt::ofqtGlWidget *QtOpenGLEmbedWindow::createEmbedWindow() {
+    return qtApp->createEmbedWindow();
+}
+
 //lets you enable alpha blending using a display string like:
 // "rgba double samples>=4 depth" ( mac )
 // "rgb double depth alpha samples>=4" ( some pcs )
@@ -76,6 +86,10 @@ void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & settings){
 //			glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE | GLUT_DEPTH | GLUT_ALPHA );
 //		}
 //	}
+
+//        QGLFormat format = ofqt::ofqtGlWidget::createOpenGLContextFormat();
+        //format.setVersion(3, 0);
+        windowId = createEmbedWindow();
 
 	windowMode = settings.windowMode;
 	bNewScreenMode = true;
