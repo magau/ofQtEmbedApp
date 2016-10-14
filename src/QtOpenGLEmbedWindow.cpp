@@ -48,8 +48,16 @@ QtOpenGLEmbedWindow::QtOpenGLEmbedWindow(){
 	windowId = 0;
 }
 
+QtOpenGLEmbedWindow::~QtOpenGLEmbedWindow(){
+    delete qtApp;
+}
+
 void QtOpenGLEmbedWindow::qtAppInit(int argc, char *argv[]) {
     qtApp = new ofQtAppInterface(argc, argv);
+}
+
+int QtOpenGLEmbedWindow::qtAppExec() {
+    return qtApp->exec();
 }
 
 ofqt::ofqtGlWidget *QtOpenGLEmbedWindow::createEmbedWindow() {
@@ -72,9 +80,11 @@ void QtOpenGLEmbedWindow::setDoubleBuffering(bool _bDoubleBuffered){
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & settings){
 
-	int argc = 1;
-	char *argv = (char*)"openframeworks";
-	char **vptr = &argv;
+	//int argc = 1;
+	//char *argv = (char*)"openframeworks";
+	//char **vptr = &argv;
+
+
 //	glutInit(&argc, vptr);
 
 //	if( displayString != ""){
@@ -201,6 +211,7 @@ void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & settings){
 	// to wherever it was when the app was started
 	ofRestoreWorkingDirectoryToDefault();
 #endif
+
 }
 
 #ifdef TARGET_LINUX
@@ -209,6 +220,9 @@ void QtOpenGLEmbedWindow::setWindowIcon(const string & path){
     ofPixels iconPixels;
 	ofLoadImage(iconPixels,path);
 	setWindowIcon(iconPixels);
+
+
+
 }
 
 //------------------------------------------------------------

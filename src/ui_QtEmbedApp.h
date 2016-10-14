@@ -32,7 +32,7 @@ public:
     QVBoxLayout *ofVerticalLayout;
     QMenuBar *menubar;
 
-    void setupUi(QMainWindow *MainWindow, QWidget *ofWindow=NULL)
+    void setupUi(QMainWindow *MainWindow, QWidget *ofWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
@@ -41,8 +41,6 @@ public:
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         horizontalLayout = new QHBoxLayout(centralwidget);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        if(ofWindow == NULL)
-            ofWindow = new QWidget;
         ofWindow->setObjectName(QString::fromUtf8("ofWindow"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);

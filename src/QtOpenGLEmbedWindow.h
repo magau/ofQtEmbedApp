@@ -20,11 +20,12 @@ class QtOpenGLEmbedWindow : public ofAppBaseGLWindow {
 public:
 
 	QtOpenGLEmbedWindow();
-	~QtOpenGLEmbedWindow(){}
+	~QtOpenGLEmbedWindow();
 
 	ofqt::ofqtGlWidget *createEmbedWindow();
 	ofqt::ofqtGlWidget *get_windowId(){ return windowId; };
 	void qtAppInit(int argc, char *argv[]);
+	int qtAppExec();
 
 	static bool doesLoop(){ return true; }
 	static bool allowsMultiWindow(){ return false; }

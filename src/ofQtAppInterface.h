@@ -13,11 +13,13 @@ class ofQtAppInterface{
     private:
     QApplication *app; //Qt app 
     QMainWindow *mainWindow;
+    ofqt::ofqtGlWidget *embedWindow;
     Ui::MainWindow *ui;
     public:
     ofQtAppInterface(int argc, char *argv[]);
     ~ofQtAppInterface();
-    void show(QtOpenGLEmbedWindow* ofWindow=NULL);
+    void show();
     int exec();
+    void resetQtUiEmbedWindow();
     ofqt::ofqtGlWidget *createEmbedWindow();
 };
