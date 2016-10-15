@@ -1,4 +1,4 @@
-
+class ofGLWindowSettings;
 class QApplication;
 class QMainWindow;
 namespace Ui {
@@ -21,5 +21,5 @@ class ofQtAppInterface{
     void show();
     int exec();
     void resetQtUiEmbedWindow();
-    ofqt::ofqtGlWidget *createEmbedWindow();
+    ofqt::ofqtGlWidget *createEmbedWindow(const ofGLWindowSettings & settings);
 };

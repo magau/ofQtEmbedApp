@@ -12,6 +12,7 @@ namespace ofqt {
 class ofBaseApp;
 class ofBaseRenderer;
 class ofQtAppInterface;
+class ofGLWindowSettings;
 //class ofPoint;
 //class QGLWidget;
 
@@ -22,7 +23,7 @@ public:
 	QtOpenGLEmbedWindow();
 	~QtOpenGLEmbedWindow();
 
-	ofqt::ofqtGlWidget *createEmbedWindow();
+	ofqt::ofqtGlWidget *createEmbedWindow(const ofGLWindowSettings & settings);
 	ofqt::ofqtGlWidget *get_windowId(){ return windowId; };
 	void qtAppInit(int argc, char *argv[]);
 	int qtAppExec();

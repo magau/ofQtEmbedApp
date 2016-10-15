@@ -60,8 +60,8 @@ int QtOpenGLEmbedWindow::qtAppExec() {
     return qtApp->exec();
 }
 
-ofqt::ofqtGlWidget *QtOpenGLEmbedWindow::createEmbedWindow() {
-    return qtApp->createEmbedWindow();
+ofqt::ofqtGlWidget *QtOpenGLEmbedWindow::createEmbedWindow(const ofGLWindowSettings & settings) {
+    return qtApp->createEmbedWindow(settings);
 }
 
 //lets you enable alpha blending using a display string like:
@@ -97,7 +97,7 @@ void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & settings){
 //		}
 //	}
 
-        windowId = createEmbedWindow();
+        windowId = createEmbedWindow(settings);
 
 	windowMode = settings.windowMode;
 	bNewScreenMode = true;

@@ -4,6 +4,7 @@
 #include "QtOpenGLEmbedWindow.h"
 #include "ofqtGlWidget.h"
 
+#include "ofGLRenderer.h"
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QSizePolicy>
 #include <QtCore/QString>
@@ -54,7 +55,7 @@ int ofQtAppInterface::exec(){
     return app->exec();
 }
 
-ofqt::ofqtGlWidget *ofQtAppInterface::createEmbedWindow(){
+ofqt::ofqtGlWidget *ofQtAppInterface::createEmbedWindow(const ofGLWindowSettings & settings){
    QGLFormat format;
    format.setVersion(3, 0);
    format.setRgba(true);
