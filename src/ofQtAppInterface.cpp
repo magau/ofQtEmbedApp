@@ -20,6 +20,16 @@ ofQtAppInterface::ofQtAppInterface(int argc, char *argv[]) :
 }
 
 void ofQtAppInterface::setupUi() {
+    /*
+     * In case you get the folowing error:
+     * ofQtEmbedApp: fccache.c:525: FcCacheFini: Assertion `fcCacheChains[i] == ((void *)0)' failed.
+     * Aborted (core dumped)
+     *
+     * edit the file:
+     * ../../../../libs/openFrameworks/graphics/ofTrueTypeFont.cpp
+     *
+     * Comment the line where FcFini() function is called.
+     */
     mainWindow->setObjectName(QString::fromUtf8("openframeworks"));
     ui->setupUi(mainWindow);
     mainWindow->setWindowTitle(QApplication::translate(
