@@ -60,8 +60,11 @@ int QtOpenGLEmbedWindow::qtAppExec() {
     return qtApp->exec();
 }
 
-ofqt::ofqtGlWidget *QtOpenGLEmbedWindow::createEmbedWindow(const ofGLWindowSettings *settings) {
-    return qtApp->createEmbedWindow(settings);
+ofqt::ofqtGlWidget *QtOpenGLEmbedWindow::createEmbedWindow(const ofGLWindowSettings *ptr_settings) {
+    settings.width = ptr_settings->width;
+    settings.height = ptr_settings->height;
+    settings.windowMode = ptr_settings->windowMode;
+    return qtApp->createEmbedWindow(&settings);
 }
 
 //lets you enable alpha blending using a display string like:
@@ -78,7 +81,7 @@ void QtOpenGLEmbedWindow::setDoubleBuffering(bool _bDoubleBuffered){
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & settings){
+void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & in_settings){
 
 	//int argc = 1;
 	//char *argv = (char*)"openframeworks";
@@ -97,7 +100,7 @@ void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & settings){
 //		}
 //	}
 
-        windowId = createEmbedWindow(&settings);
+        windowId = createEmbedWindow(&in_settings);
 
 	windowMode = settings.windowMode;
 	bNewScreenMode = true;
@@ -146,25 +149,25 @@ void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & settings){
 //	windowW = glutGet(GLUT_WINDOW_WIDTH);
 //	windowH = glutGet(GLUT_WINDOW_HEIGHT);
 
-	currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
+currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
 
 
 #ifndef TARGET_OPENGLES
-	glewExperimental = GL_TRUE;
-	GLenum err = glewInit();
-	if (GLEW_OK != err)
-	{
-		/* Problem: glewInit failed, something is seriously wrong. */
-		ofLogError("ofAppRunner") << "couldn't init GLEW: " << glewGetErrorString(err);
-		return;
-	}
+glewExperimental = GL_TRUE;
+GLenum err = glewInit();
+if (GLEW_OK != err)
+{
+	/* Problem: glewInit failed, something is seriously wrong. */
+	ofLogError("ofAppRunner") << "couldn't init GLEW: " << glewGetErrorString(err);
+	return;
+}
 #endif
-	static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
-	setVerticalSync(true);
+static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
+setVerticalSync(true);
 
 
-    //----------------------
-    // setup the callbacks
+//----------------------
+// setup the callbacks
 
 //    glutMouseFunc(mouse_cb);
 //    glutMotionFunc(motion_cb);
@@ -187,29 +190,29 @@ void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & settings){
 //	glutDragEventFunc(dragEvent);
 //#endif
 
-    nFramesSinceWindowResized = 0;
+nFramesSinceWindowResized = 0;
 
 #ifdef TARGET_LINUX
-    if(!iconSet){
-		ofPixels iconPixels;
-		#ifdef DEBUG
-			iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
-			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
-		#else
-			iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
-			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
-		#endif
-		setWindowIcon(iconPixels);
-    }
+if(!iconSet){
+	ofPixels iconPixels;
+	#ifdef DEBUG
+		iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
+		GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
+	#else
+		iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
+		GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
+	#endif
+	setWindowIcon(iconPixels);
+}
 #endif
-	if (settings.isPositionSet()) {
-		setWindowPosition(settings.getPosition().x,settings.getPosition().y);
-	}
+if (settings.isPositionSet()) {
+	setWindowPosition(settings.getPosition().x,settings.getPosition().y);
+}
 
 #ifdef TARGET_OSX
-	// The osx implementation of glut changes the cwd, this restores it
-	// to wherever it was when the app was started
-	ofRestoreWorkingDirectoryToDefault();
+// The osx implementation of glut changes the cwd, this restores it
+// to wherever it was when the app was started
+ofRestoreWorkingDirectoryToDefault();
 #endif
 
 }
@@ -217,9 +220,9 @@ void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & settings){
 #ifdef TARGET_LINUX
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::setWindowIcon(const string & path){
-    ofPixels iconPixels;
-	ofLoadImage(iconPixels,path);
-	setWindowIcon(iconPixels);
+ofPixels iconPixels;
+ofLoadImage(iconPixels,path);
+setWindowIcon(iconPixels);
 
 
 
@@ -227,42 +230,42 @@ void QtOpenGLEmbedWindow::setWindowIcon(const string & path){
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::setWindowIcon(const ofPixels & iconPixels){
-	iconSet = true;
-	Display *m_display = glXGetCurrentDisplay();
-	GLXDrawable m_window = glXGetCurrentDrawable();
-	iconSet = true;
-	int length = 2+iconPixels.getWidth()*iconPixels.getHeight();
-	unsigned long * buffer = new unsigned long[length];
-	buffer[0]=iconPixels.getWidth();
-	buffer[1]=iconPixels.getHeight();
-	for(int i=0;i<iconPixels.getWidth()*iconPixels.getHeight();i++){
-		buffer[i+2] = iconPixels[i*4+3]<<24;
-		buffer[i+2] += iconPixels[i*4]<<16;
-		buffer[i+2] += iconPixels[i*4+1]<<8;
-		buffer[i+2] += iconPixels[i*4];
-	}
+iconSet = true;
+Display *m_display = glXGetCurrentDisplay();
+GLXDrawable m_window = glXGetCurrentDrawable();
+iconSet = true;
+int length = 2+iconPixels.getWidth()*iconPixels.getHeight();
+unsigned long * buffer = new unsigned long[length];
+buffer[0]=iconPixels.getWidth();
+buffer[1]=iconPixels.getHeight();
+for(int i=0;i<iconPixels.getWidth()*iconPixels.getHeight();i++){
+	buffer[i+2] = iconPixels[i*4+3]<<24;
+	buffer[i+2] += iconPixels[i*4]<<16;
+	buffer[i+2] += iconPixels[i*4+1]<<8;
+	buffer[i+2] += iconPixels[i*4];
+}
 
-	XChangeProperty(m_display, m_window, XInternAtom(m_display, "_NET_WM_ICON", False), XA_CARDINAL, 32,
-						 PropModeReplace,  (const unsigned char*)buffer,  length);
-	delete[] buffer;
-	XFlush(m_display);
+XChangeProperty(m_display, m_window, XInternAtom(m_display, "_NET_WM_ICON", False), XA_CARDINAL, 32,
+					 PropModeReplace,  (const unsigned char*)buffer,  length);
+delete[] buffer;
+XFlush(m_display);
 }
 #endif
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::update(){
-	idle_cb();
+idle_cb();
 }
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::draw(){
-	display();
+display();
 }
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::close(){
-	events().notifyExit();
-	events().disable();
+events().notifyExit();
+events().disable();
 //#ifdef TARGET_LINUX
 //	glutLeaveMainLoop();
 //#else
@@ -272,8 +275,8 @@ void QtOpenGLEmbedWindow::close(){
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::loop(){
-	instance->events().notifySetup();
-	instance->events().notifyUpdate();
+instance->events().notifySetup();
+instance->events().notifyUpdate();
 //	glutMainLoop();
 }
 
@@ -284,268 +287,268 @@ void QtOpenGLEmbedWindow::setWindowTitle(string title){
 
 //------------------------------------------------------------
 ofPoint QtOpenGLEmbedWindow::getWindowSize(){
-	return ofPoint(windowW, windowH,0);
+return ofPoint(windowW, windowH,0);
 }
 
 //------------------------------------------------------------
 ofPoint QtOpenGLEmbedWindow::getWindowPosition(){
-	int x = 0;//glutGet(GLUT_WINDOW_X);
-	int y = 0;//glutGet(GLUT_WINDOW_Y);
-	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return ofPoint(x,y,0);
-	}else{
-		return ofPoint(y,x,0);
-	}
+int x = 0;//glutGet(GLUT_WINDOW_X);
+int y = 0;//glutGet(GLUT_WINDOW_Y);
+if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+	return ofPoint(x,y,0);
+}else{
+	return ofPoint(y,x,0);
+}
 }
 
 //------------------------------------------------------------
 ofPoint QtOpenGLEmbedWindow::getScreenSize(){
-	int width = 500;//glutGet(GLUT_SCREEN_WIDTH);
-	int height = 500;//glutGet(GLUT_SCREEN_HEIGHT);
-	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return ofPoint(width, height,0);
-	}else{
-		return ofPoint(height, width,0);
-	}
+int width = 500;//glutGet(GLUT_SCREEN_WIDTH);
+int height = 500;//glutGet(GLUT_SCREEN_HEIGHT);
+if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+	return ofPoint(width, height,0);
+}else{
+	return ofPoint(height, width,0);
+}
 }
 
 //------------------------------------------------------------
 int QtOpenGLEmbedWindow::getWidth(){
-	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return windowW;
-	}
-	return windowH;
+if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+	return windowW;
+}
+return windowH;
 }
 
 //------------------------------------------------------------
 int QtOpenGLEmbedWindow::getHeight(){
-	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-		return windowH;
-	}
-	return windowW;
+if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
+	return windowH;
+}
+return windowW;
 }
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::setOrientation(ofOrientation orientationIn){
-	orientation = orientationIn;
+orientation = orientationIn;
 }
 
 //------------------------------------------------------------
 ofOrientation QtOpenGLEmbedWindow::getOrientation(){
-	return orientation;
+return orientation;
 }
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::setWindowPosition(int x, int y){
-	//glutPositionWindow(x,y);
+//glutPositionWindow(x,y);
 }
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::setWindowShape(int w, int h){
 //	glutReshapeWindow(w, h);
-	// this is useful, esp if we are in the first frame (setup):
-	requestedWidth  = w;
-	requestedHeight = h;
+// this is useful, esp if we are in the first frame (setup):
+requestedWidth  = w;
+requestedHeight = h;
 }
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::hideCursor(){
-	#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
-		 CGDisplayHideCursor(0);
-	#else
+#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
+	 CGDisplayHideCursor(0);
+#else
 //		glutSetCursor(GLUT_CURSOR_NONE);
-	#endif
+#endif
 }
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::showCursor(){
-	#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
-		 CGDisplayShowCursor(0);
-	#else
+#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
+	 CGDisplayShowCursor(0);
+#else
 //		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
-	#endif
+#endif
 }
 
 //------------------------------------------------------------
 ofWindowMode QtOpenGLEmbedWindow::getWindowMode(){
-	return windowMode;
+return windowMode;
 }
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::toggleFullscreen(){
-	if( windowMode == OF_GAME_MODE)return;
+if( windowMode == OF_GAME_MODE)return;
 
-	if( windowMode == OF_WINDOW ){
-		windowMode = OF_FULLSCREEN;
-	}else{
-		windowMode = OF_WINDOW;
-	}
+if( windowMode == OF_WINDOW ){
+	windowMode = OF_FULLSCREEN;
+}else{
+	windowMode = OF_WINDOW;
+}
 
-	bNewScreenMode = true;
+bNewScreenMode = true;
 }
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::setFullscreen(bool fullscreen){
-    if( windowMode == OF_GAME_MODE)return;
+if( windowMode == OF_GAME_MODE)return;
 
-    if(fullscreen && windowMode != OF_FULLSCREEN){
-        bNewScreenMode  = true;
-        windowMode      = OF_FULLSCREEN;
-    }else if(!fullscreen && windowMode != OF_WINDOW) {
-        bNewScreenMode  = true;
-        windowMode      = OF_WINDOW;
-    }
+if(fullscreen && windowMode != OF_FULLSCREEN){
+bNewScreenMode  = true;
+windowMode      = OF_FULLSCREEN;
+}else if(!fullscreen && windowMode != OF_WINDOW) {
+bNewScreenMode  = true;
+windowMode      = OF_WINDOW;
+}
 }
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::enableSetupScreen(){
-	bEnableSetupScreen = true;
+bEnableSetupScreen = true;
 }
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::disableSetupScreen(){
-	bEnableSetupScreen = false;
+bEnableSetupScreen = false;
 }
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::setVerticalSync(bool bSync){
-	//----------------------------
-	//--------------------------------------
-	#ifdef TARGET_OSX
-	//--------------------------------------
-		GLint sync = bSync == true ? 1 : 0;
-		CGLSetParameter (CGLGetCurrentContext(), kCGLCPSwapInterval, &sync);
-	//--------------------------------------
-	#endif
-	//--------------------------------------
+//----------------------------
+//--------------------------------------
+#ifdef TARGET_OSX
+//--------------------------------------
+	GLint sync = bSync == true ? 1 : 0;
+	CGLSetParameter (CGLGetCurrentContext(), kCGLCPSwapInterval, &sync);
+//--------------------------------------
+#endif
+//--------------------------------------
 
-	//--------------------------------------
-	#ifdef TARGET_LINUX
-	//--------------------------------------
-		void (*swapIntervalExt)(Display *,GLXDrawable, int)	 = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
-		if(swapIntervalExt){
-			Display *dpy = glXGetCurrentDisplay();
-			GLXDrawable drawable = glXGetCurrentDrawable();
-			if (drawable) {
-				swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
-				return;
-			}
+//--------------------------------------
+#ifdef TARGET_LINUX
+//--------------------------------------
+	void (*swapIntervalExt)(Display *,GLXDrawable, int)	 = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
+	if(swapIntervalExt){
+		Display *dpy = glXGetCurrentDisplay();
+		GLXDrawable drawable = glXGetCurrentDrawable();
+		if (drawable) {
+			swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
+			return;
 		}
-		void (*swapInterval)(int) = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
-		if(!swapInterval) {
-			swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
-		}
-		if(swapInterval) {
-			swapInterval(bSync ? 1 : 0);
-		}
-	//--------------------------------------
-	#endif
-	//--------------------------------------
+	}
+	void (*swapInterval)(int) = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
+	if(!swapInterval) {
+		swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
+	}
+	if(swapInterval) {
+		swapInterval(bSync ? 1 : 0);
+	}
+//--------------------------------------
+#endif
+//--------------------------------------
 }
 
 //------------------------------------------------------------
 ofCoreEvents & QtOpenGLEmbedWindow::events(){
-	return coreEvents;
+return coreEvents;
 }
 
 //------------------------------------------------------------
 shared_ptr<ofBaseRenderer> & QtOpenGLEmbedWindow::renderer(){
-	return currentRenderer;
+return currentRenderer;
 }
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::display(void){
 
-	//--------------------------------
-	// when I had "glutFullScreen()"
-	// in the initOpenGl, I was gettings a "heap" allocation error
-	// when debugging via visual studio.  putting it here, changes that.
-	// maybe it's voodoo, or I am getting rid of the problem
-	// by removing something unrelated, but everything seems
-	// to work if I put fullscreen on the first frame of display.
+//--------------------------------
+// when I had "glutFullScreen()"
+// in the initOpenGl, I was gettings a "heap" allocation error
+// when debugging via visual studio.  putting it here, changes that.
+// maybe it's voodoo, or I am getting rid of the problem
+// by removing something unrelated, but everything seems
+// to work if I put fullscreen on the first frame of display.
 
-	if (windowMode != OF_GAME_MODE){
-		if ( bNewScreenMode ){
-			if( windowMode == OF_FULLSCREEN){
+if (windowMode != OF_GAME_MODE){
+	if ( bNewScreenMode ){
+		if( windowMode == OF_FULLSCREEN){
 
-				//----------------------------------------------------
-				// before we go fullscreen, take a snapshot of where we are:
-				nonFullScreenX = 0;//glutGet(GLUT_WINDOW_X);
-				nonFullScreenY = 0;//glutGet(GLUT_WINDOW_Y);
-				//----------------------------------------------------
+			//----------------------------------------------------
+			// before we go fullscreen, take a snapshot of where we are:
+			nonFullScreenX = 0;//glutGet(GLUT_WINDOW_X);
+			nonFullScreenY = 0;//glutGet(GLUT_WINDOW_Y);
+			//----------------------------------------------------
 
-				//glutFullScreen();
+			//glutFullScreen();
 
-				#ifdef TARGET_OSX
-					[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
-					#ifdef MAC_OS_X_VERSION_10_7 //needed for Lion as when the machine reboots the app is not at front level
-						if( instance->events().getFrameNum() <= 10 ){  //is this long enough? too long?
-							[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
-						}
-					#endif
+			#ifdef TARGET_OSX
+				[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
+				#ifdef MAC_OS_X_VERSION_10_7 //needed for Lion as when the machine reboots the app is not at front level
+					if( instance->events().getFrameNum() <= 10 ){  //is this long enough? too long?
+						[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+					}
 				#endif
+			#endif
 
-			}else if( windowMode == OF_WINDOW ){
+		}else if( windowMode == OF_WINDOW ){
 
-				//glutReshapeWindow(requestedWidth, requestedHeight);
+			//glutReshapeWindow(requestedWidth, requestedHeight);
 
-				//----------------------------------------------------
-				// if we have recorded the screen posion, put it there
-				// if not, better to let the system do it (and put it where it wants)
-				//if (instance->events().getFrameNum() > 0){
-				//	glutPositionWindow(nonFullScreenX,nonFullScreenY);
-				//}
-				//----------------------------------------------------
+			//----------------------------------------------------
+			// if we have recorded the screen posion, put it there
+			// if not, better to let the system do it (and put it where it wants)
+			//if (instance->events().getFrameNum() > 0){
+			//	glutPositionWindow(nonFullScreenX,nonFullScreenY);
+			//}
+			//----------------------------------------------------
 
-				#ifdef TARGET_OSX
-					[NSApp setPresentationOptions:NSApplicationPresentationDefault];
-				#endif
-			}
-			bNewScreenMode = false;
+			#ifdef TARGET_OSX
+				[NSApp setPresentationOptions:NSApplicationPresentationDefault];
+			#endif
+		}
+		bNewScreenMode = false;
+	}
+}
+
+instance->currentRenderer->startRender();
+
+if( bEnableSetupScreen ) instance->currentRenderer->setupScreen();
+
+instance->events().notifyDraw();
+
+#ifdef TARGET_WIN32
+if (instance->currentRenderer->getBackgroundAuto() == false){
+// on a PC resizing a window with this method of accumulation (essentially single buffering)
+// is BAD, so we clear on resize events.
+if (nFramesSinceWindowResized < 3){
+    instance->currentRenderer->clear();
+} else {
+//           if ( (instance->events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
+//           else  glFlush();
+      glFlush();
+}
+} else {
+//if(bDoubleBuffered){
+//		glutSwapBuffers();
+//	} else{
+//		glFlush();
+//	}
+      glFlush();
+}
+#else
+	if (instance->currentRenderer->getBackgroundAuto() == false){
+		// in accum mode resizing a window is BAD, so we clear on resize events.
+		if (nFramesSinceWindowResized < 3){
+			instance->currentRenderer->clear();
 		}
 	}
+//	if(bDoubleBuffered){
+//		glutSwapBuffers();
+//	} else{
+//		glFlush();
+//	}
+      glFlush();
+#endif
 
-	instance->currentRenderer->startRender();
-
-	if( bEnableSetupScreen ) instance->currentRenderer->setupScreen();
-
-	instance->events().notifyDraw();
-
-    #ifdef TARGET_WIN32
-    if (instance->currentRenderer->getBackgroundAuto() == false){
-        // on a PC resizing a window with this method of accumulation (essentially single buffering)
-        // is BAD, so we clear on resize events.
-        if (nFramesSinceWindowResized < 3){
-            instance->currentRenderer->clear();
-        } else {
- //           if ( (instance->events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
- //           else  glFlush();
-              glFlush();
-        }
-    } else {
-        //if(bDoubleBuffered){
-	//		glutSwapBuffers();
-	//	} else{
-	//		glFlush();
-	//	}
-              glFlush();
-    }
-    #else
-		if (instance->currentRenderer->getBackgroundAuto() == false){
-			// in accum mode resizing a window is BAD, so we clear on resize events.
-			if (nFramesSinceWindowResized < 3){
-				instance->currentRenderer->clear();
-			}
-		}
-	//	if(bDoubleBuffered){
-	//		glutSwapBuffers();
-	//	} else{
-	//		glFlush();
-	//	}
-              glFlush();
-    #endif
-
-	instance->currentRenderer->finishRender();
+instance->currentRenderer->finishRender();
 
     nFramesSinceWindowResized++;
 

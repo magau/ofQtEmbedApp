@@ -23,7 +23,7 @@ public:
 	QtOpenGLEmbedWindow();
 	~QtOpenGLEmbedWindow();
 
-	ofqt::ofqtGlWidget *createEmbedWindow(const ofGLWindowSettings *settings);
+	ofqt::ofqtGlWidget *createEmbedWindow(const ofGLWindowSettings *in_settings);
 	ofqt::ofqtGlWidget *get_windowId(){ return windowId; };
 	void qtAppInit(int argc, char *argv[]);
 	int qtAppExec();
@@ -75,6 +75,7 @@ public:
 	ofCoreEvents & events();
 	shared_ptr<ofBaseRenderer> & renderer();
         ofQtAppInterface* qtApp;
+	ofGLWindowSettings getSettings(){ return settings; }
 
 private:
 	static void display(void);
@@ -102,6 +103,7 @@ private:
 	shared_ptr<ofBaseRenderer> currentRenderer;
 	//int windowId;
         ofqt::ofqtGlWidget* windowId;
+        ofGLWindowSettings settings;
 };
 
 

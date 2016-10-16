@@ -6,7 +6,7 @@ int main(int argc, char *argv[]){
         QtOpenGLEmbedWindow ofQtWindow; // create a window
 
         ofQtWindow.qtAppInit(argc, argv);
-
+        
         // set width, height, mode (OF_WINDOW or OF_FULLSCREEN)
         ofSetupOpenGL(&ofQtWindow, 1024, 768, OF_WINDOW);                   // <-------- setup the GL context
         

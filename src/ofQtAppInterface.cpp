@@ -17,6 +17,13 @@ ofQtAppInterface::ofQtAppInterface(int argc, char *argv[]) :
                                   app(new QApplication(argc, argv)),
                                   mainWindow(new QMainWindow),
                                   ui(new Ui::openframeworks) {
+
+        //cout << "argc: " << argc << endl;
+        //vector<std::string> args(argv, argv + argc);
+        //for (string& iarg : args){
+        //    cout << "argv: " << iarg << endl;
+        //}
+
 }
 
 void ofQtAppInterface::setupUi() {
@@ -32,6 +39,7 @@ void ofQtAppInterface::setupUi() {
      */
     ui->setupUi(mainWindow);
     embedWindow->setParent(ui->ofWindow);
+    mainWindow->resize(windowSettings->width, windowSettings->height);   
 }
 
 void ofQtAppInterface::show(){
