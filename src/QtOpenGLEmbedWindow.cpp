@@ -60,7 +60,7 @@ int QtOpenGLEmbedWindow::qtAppExec() {
     return qtApp->exec();
 }
 
-ofqt::ofqtGlWidget *QtOpenGLEmbedWindow::createEmbedWindow(const ofGLWindowSettings & settings) {
+ofqt::ofqtGlWidget *QtOpenGLEmbedWindow::createEmbedWindow(const ofGLWindowSettings *settings) {
     return qtApp->createEmbedWindow(settings);
 }
 
@@ -97,7 +97,7 @@ void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & settings){
 //		}
 //	}
 
-        windowId = createEmbedWindow(settings);
+        windowId = createEmbedWindow(&settings);
 
 	windowMode = settings.windowMode;
 	bNewScreenMode = true;

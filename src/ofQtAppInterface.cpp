@@ -19,26 +19,19 @@ ofQtAppInterface::ofQtAppInterface(int argc, char *argv[]) :
                                   ui(new Ui::MainWindow) {
 }
 
-void ofQtAppInterface::show(){
-    ui->setupUi(mainWindow, (QWidget *) embedWindow);
-    //ui->setupUi(mainWindow);
-    //resetQtUi();
-    embedWindow->show();
-    mainWindow->show();
+void ofQtAppInterface::setupUi() {
+    mainWindow->setObjectName(QString::fromUtf8("openframeworks"));
+    ui->setupUi(mainWindow);
+    mainWindow->setWindowTitle(QApplication::translate(
+        "openframeworks", "openframeworks", 0,
+        QApplication::UnicodeUTF8
+    ));
+    embedWindow->setParent(ui->ofWindow);
 }
 
-void ofQtAppInterface::resetQtUiEmbedWindow() {
-    delete ui->ofWindow;
-    ui->ofWindow = (QWidget *) embedWindow;
-    embedWindow->setObjectName(QString::fromUtf8("ofWindow"));
-    QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    sizePolicy.setHorizontalStretch(0);
-    sizePolicy.setVerticalStretch(0);
-    sizePolicy.setHeightForWidth(embedWindow->sizePolicy().hasHeightForWidth());
-    embedWindow->setSizePolicy(sizePolicy);
-    delete ui->ofVerticalLayout;
-    ui->ofVerticalLayout = new QVBoxLayout(embedWindow);
-    ui->horizontalLayout->addWidget(embedWindow);
+void ofQtAppInterface::show(){
+    embedWindow->show();
+    mainWindow->show();
 }
 
 ofQtAppInterface::~ofQtAppInterface(){
@@ -51,17 +44,19 @@ ofQtAppInterface::~ofQtAppInterface(){
 }
 
 int ofQtAppInterface::exec(){
+    setupUi();
     show();
     return app->exec();
 }
 
-ofqt::ofqtGlWidget *ofQtAppInterface::createEmbedWindow(const ofGLWindowSettings & settings){
-   QGLFormat format;
-   format.setVersion(3, 0);
-   format.setRgba(true);
-   format.setDoubleBuffer(true);
-   format.setDepth(true);
-   embedWindow = new ofqt::ofqtGlWidget(format);
-   embedWindow->makeCurrent();
-   return embedWindow; 
+ofqt::ofqtGlWidget *ofQtAppInterface::createEmbedWindow(const ofGLWindowSettings *settings){
+    windowSettings = settings;
+    QGLFormat format;
+    format.setVersion(3, 0);
+    format.setRgba(true);
+    format.setDoubleBuffer(true);
+    format.setDepth(true);
+    embedWindow = new ofqt::ofqtGlWidget(format);
+    embedWindow->makeCurrent();
+    return embedWindow; 
 }

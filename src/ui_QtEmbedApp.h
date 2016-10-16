@@ -19,7 +19,6 @@
 #include <QtGui/QMenuBar>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QWidget>
-#include <Qt/qx11embed_x11.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -32,7 +31,7 @@ public:
     QVBoxLayout *ofVerticalLayout;
     QMenuBar *menubar;
 
-    void setupUi(QMainWindow *MainWindow, QWidget *ofWindow)
+    void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
@@ -41,6 +40,7 @@ public:
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         horizontalLayout = new QHBoxLayout(centralwidget);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        ofWindow = new QWidget(centralwidget);
         ofWindow->setObjectName(QString::fromUtf8("ofWindow"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);

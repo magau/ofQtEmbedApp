@@ -23,7 +23,7 @@ public:
 	QtOpenGLEmbedWindow();
 	~QtOpenGLEmbedWindow();
 
-	ofqt::ofqtGlWidget *createEmbedWindow(const ofGLWindowSettings & settings);
+	ofqt::ofqtGlWidget *createEmbedWindow(const ofGLWindowSettings *settings);
 	ofqt::ofqtGlWidget *get_windowId(){ return windowId; };
 	void qtAppInit(int argc, char *argv[]);
 	int qtAppExec();
