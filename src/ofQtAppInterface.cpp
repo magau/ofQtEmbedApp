@@ -16,7 +16,7 @@
 ofQtAppInterface::ofQtAppInterface(int argc, char *argv[]) :
                                   app(new QApplication(argc, argv)),
                                   mainWindow(new QMainWindow),
-                                  ui(new Ui::MainWindow) {
+                                  ui(new Ui::openframeworks) {
 }
 
 void ofQtAppInterface::setupUi() {
@@ -30,12 +30,7 @@ void ofQtAppInterface::setupUi() {
      *
      * Comment the line where FcFini() function is called.
      */
-    mainWindow->setObjectName(QString::fromUtf8("openframeworks"));
     ui->setupUi(mainWindow);
-    mainWindow->setWindowTitle(QApplication::translate(
-        "openframeworks", "openframeworks", 0,
-        QApplication::UnicodeUTF8
-    ));
     embedWindow->setParent(ui->ofWindow);
 }
 

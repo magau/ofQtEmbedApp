@@ -2,7 +2,7 @@ class ofGLWindowSettings;
 class QApplication;
 class QMainWindow;
 namespace Ui {
-    class MainWindow;
+    class openframeworks;
 }
 class QtOpenGLEmbedWindow;
 namespace ofqt {
@@ -14,7 +14,7 @@ class ofQtAppInterface{
     QApplication *app; //Qt app 
     QMainWindow *mainWindow;
     ofqt::ofqtGlWidget *embedWindow;
-    Ui::MainWindow *ui;
+    Ui::openframeworks *ui;
     const ofGLWindowSettings *windowSettings;
     public:
     ofQtAppInterface(int argc, char *argv[]);
