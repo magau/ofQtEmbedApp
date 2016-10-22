@@ -26,6 +26,16 @@ ofQtAppInterface::ofQtAppInterface(int argc, char *argv[]) :
 
 }
 
+ofQtAppInterface::~ofQtAppInterface(){
+    delete ui;
+    delete mainWindow;
+    //std::cout << "delete embedWindow" << std::endl;
+    //delete embedWindow;
+    //std::cout << "done" << std::endl;
+    delete app;
+}
+
+
 void ofQtAppInterface::setupUi() {
     /*
      * In case you get the folowing error:
@@ -39,31 +49,14 @@ void ofQtAppInterface::setupUi() {
      */
     ui->setupUi(mainWindow);
     embedWindow->setParent(ui->ofWindow);
-    mainWindow->resize(windowSettings->width, windowSettings->height);   
+    mainWindow->resize(ofWindow->windowW,
+                       ofWindow->windowH);   
+    ofWindow->windowW = embedWindow->width();
+    ofWindow->windowH = embedWindow->height();
 }
 
-void ofQtAppInterface::show(){
-    embedWindow->show();
-    mainWindow->show();
-}
-
-ofQtAppInterface::~ofQtAppInterface(){
-    delete ui;
-    delete mainWindow;
-    //std::cout << "delete embedWindow" << std::endl;
-    //delete embedWindow;
-    //std::cout << "done" << std::endl;
-    delete app;
-}
-
-int ofQtAppInterface::exec(){
-    setupUi();
-    show();
-    return app->exec();
-}
-
-ofqt::ofqtGlWidget *ofQtAppInterface::createEmbedWindow(const ofGLWindowSettings *settings){
-    windowSettings = settings;
+ofqt::ofqtGlWidget *ofQtAppInterface::createEmbedWindow(QtOpenGLEmbedWindow *ofWindow_ptr){
+    ofWindow = ofWindow_ptr;
     QGLFormat format;
     format.setVersion(3, 0);
     format.setRgba(true);
@@ -72,4 +65,14 @@ ofqt::ofqtGlWidget *ofQtAppInterface::createEmbedWindow(const ofGLWindowSettings
     embedWindow = new ofqt::ofqtGlWidget(format);
     embedWindow->makeCurrent();
     return embedWindow; 
+}
+void ofQtAppInterface::show(){
+    setupUi();
+    embedWindow->show();
+    mainWindow->show();
+}
+
+int ofQtAppInterface::exec(){
+    show();
+    return app->exec();
 }

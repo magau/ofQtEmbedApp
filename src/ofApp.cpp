@@ -4,16 +4,22 @@
 void ofApp::setup(){
     ofEnableSmoothing();
     ofSetVerticalSync(true);
+    ploc.x = ofGetWindowWidth()/2;
+    ploc.y = ofGetWindowHeight()/2;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    ploc.x = ofGetMouseX();
+    ploc.y = ofGetMouseY();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(0);
+    ofSetColor(ofColor(255,0,0));
+    int rad = 13;
+    ofDrawEllipse(ploc.x,ploc.y,rad,rad);
 }
 
 //--------------------------------------------------------------

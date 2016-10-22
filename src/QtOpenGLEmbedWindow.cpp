@@ -22,8 +22,6 @@ static int			requestedWidth;
 static int			requestedHeight;
 static int 			nonFullScreenX;
 static int 			nonFullScreenY;
-static int			windowW;
-static int			windowH;
 static int          nFramesSinceWindowResized;
 static ofOrientation	orientation;
 static QtOpenGLEmbedWindow * instance;
@@ -57,14 +55,18 @@ void QtOpenGLEmbedWindow::qtAppInit(int argc, char *argv[]) {
 }
 
 int QtOpenGLEmbedWindow::qtAppExec() {
-    return qtApp->exec();
+    int exec_result = qtApp->exec();
+    return exec_result;
 }
 
 ofqt::ofqtGlWidget *QtOpenGLEmbedWindow::createEmbedWindow(const ofGLWindowSettings *ptr_settings) {
+    settings.windowMode = ptr_settings->windowMode;
     settings.width = ptr_settings->width;
     settings.height = ptr_settings->height;
-    settings.windowMode = ptr_settings->windowMode;
-    return qtApp->createEmbedWindow(&settings);
+    windowW = settings.width;
+    windowH = settings.height;
+    windowId = qtApp->createEmbedWindow(this);
+    return windowId ;
 }
 
 //lets you enable alpha blending using a display string like:
@@ -83,71 +85,14 @@ void QtOpenGLEmbedWindow::setDoubleBuffering(bool _bDoubleBuffered){
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & in_settings){
 
-	//int argc = 1;
-	//char *argv = (char*)"openframeworks";
-	//char **vptr = &argv;
-
-
-//	glutInit(&argc, vptr);
-
-//	if( displayString != ""){
-//		glutInitDisplayString( displayString.c_str() );
-//	}else{
-//		if(bDoubleBuffered){  
-//			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
-//		}else{
-//			glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE | GLUT_DEPTH | GLUT_ALPHA );
-//		}
-//	}
-
-        windowId = createEmbedWindow(&in_settings);
-
-	windowMode = settings.windowMode;
+        createEmbedWindow(&in_settings);
 	bNewScreenMode = true;
+	windowMode = settings.windowMode;
+	//requestedWidth  = settings.width;
+	//requestedHeight = settings.height;
+	//windowW = settings.width;
+	//windowH = settings.height;
 
-	if (windowMode == OF_FULLSCREEN){
-//		glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
-//		windowId = glutCreateWindow("");
-		
-		requestedWidth  = settings.width;
-		requestedHeight = settings.height;
-//	} else if (windowMode != OF_GAME_MODE){
-//		glutInitWindowSize(settings.width, settings.height);
-//		windowId = glutCreateWindow("");
-
-		/*
-		ofBackground(200,200,200);		// default bg color
-		ofSetColor(0xFFFFFF); 			// default draw color
-		// used to be black, but
-		// black + texture = black
-		// so maybe grey bg
-		// and "white" fg color
-		// as default works the best...
-		*/
-
-//		requestedWidth  = glutGet(GLUT_WINDOW_WIDTH);
-//		requestedHeight = glutGet(GLUT_WINDOW_HEIGHT);
-	} else {
-//		if( displayString != ""){
-//			glutInitDisplayString( displayString.c_str() );
-//		}else{
-//			glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA );
-//		}
-
-    	// w x h, 32bit pixel depth, 60Hz refresh rate
-		char gameStr[64];
-		sprintf( gameStr, "%dx%d:%d@%d", settings.width, settings.height, 32, 60 );
-
-//    	glutGameModeString(gameStr);
-
-//    	if (!glutGameModeGet(GLUT_GAME_MODE_POSSIBLE)){
-//    		ofLogError("QtOpenGLEmbedWindow") << "setupOpenGL(): selected game mode format " << gameStr << " not available";
-//    	}
-    	// start fullscreen game mode
-//    	windowId = glutEnterGameMode();
-	}
-//	windowW = glutGet(GLUT_WINDOW_WIDTH);
-//	windowH = glutGet(GLUT_WINDOW_HEIGHT);
 
 currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
 
@@ -675,8 +620,8 @@ void QtOpenGLEmbedWindow::special_key_up_cb(int key, int x, int y) {
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::resize_cb(int w, int h) {
-	windowW = w;
-	windowH = h;
+//	windowW = w;
+//	windowH = h;
 
 	instance->events().notifyWindowResized(w, h);
 

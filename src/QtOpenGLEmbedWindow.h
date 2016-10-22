@@ -75,6 +75,8 @@ public:
 	ofCoreEvents & events();
 	shared_ptr<ofBaseRenderer> & renderer();
         ofQtAppInterface* qtApp;
+        int windowW;
+        int windowH;
 	ofGLWindowSettings getSettings(){ return settings; }
 
 private:

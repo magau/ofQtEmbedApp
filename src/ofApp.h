@@ -6,6 +6,7 @@
 
 class ofApp : public ofBaseApp{
 	public:
+                ofVec3f ploc;
 		void setup();
 		void update();
 		void draw();
