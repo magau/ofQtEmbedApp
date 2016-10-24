@@ -24,4 +24,5 @@ class ofQtAppInterface{
     ofqt::ofqtGlWidget *createEmbedWindow(QtOpenGLEmbedWindow *ofWindow_ptr);
     void show();
     int exec();
+    void resize_cb_interface(int w, int h);
 };

@@ -1,6 +1,7 @@
 #include <iostream>
 //#include <QGLShader>
 
+#include "ofQtAppInterface.h"
 #include "ofqtGlWidget.h"
 
 using namespace ofqt;
@@ -102,3 +103,15 @@ void ofqtGlWidget::resizeGL()
 {
 //    getCurrentCamera().setCameraAspect(width() / height());
 }
+
+void ofqtGlWidget::resizeEvent(QResizeEvent * event){
+    const QSize& size = event->size();
+    appInterface->resize_cb_interface(
+        size.width(),
+        size.height()
+    );
+}
+
+void ofqtGlWidget::setAppInterface(ofQtAppInterface* appInterface_ptr){
+    appInterface = appInterface_ptr;
+};

@@ -6,6 +6,7 @@
 
 #include "ofGLRenderer.h"
 #include <QtGui/QVBoxLayout>
+#include <QtGui/QHBoxLayout>
 #include <QtGui/QSizePolicy>
 #include <QtCore/QString>
 #include <QtOpenGL/QGLFormat>
@@ -48,11 +49,25 @@ void ofQtAppInterface::setupUi() {
      * Comment the line where FcFini() function is called.
      */
     ui->setupUi(mainWindow);
-    embedWindow->setParent(ui->ofWindow);
+
+    /* Remove the ui->ofWindow QWidget, which was created
+       by the ui->setupUi method. Replace it by the 
+       'embedWindow' our QGLWidget derived class.
+     */
+    embedWindow->setSizePolicy(ui->ofWindow->sizePolicy());
+    //ui->horizontalLayout->removeWidget(ui->ofWindow);
+    delete ui->ofWindow;
+    ui->ofWindow = embedWindow;
+    ui->horizontalLayout->addWidget(embedWindow);
+
     mainWindow->resize(ofWindow->windowW,
                        ofWindow->windowH);   
     ofWindow->windowW = embedWindow->width();
     ofWindow->windowH = embedWindow->height();
+}
+
+void ofQtAppInterface::resize_cb_interface(int w, int h){
+    ofWindow->resize_cb(w, h);
 }
 
 ofqt::ofqtGlWidget *ofQtAppInterface::createEmbedWindow(QtOpenGLEmbedWindow *ofWindow_ptr){
@@ -63,6 +78,7 @@ ofqt::ofqtGlWidget *ofQtAppInterface::createEmbedWindow(QtOpenGLEmbedWindow *ofW
     format.setDoubleBuffer(true);
     format.setDepth(true);
     embedWindow = new ofqt::ofqtGlWidget(format);
+    embedWindow->setAppInterface(this);
     embedWindow->makeCurrent();
     return embedWindow; 
 }

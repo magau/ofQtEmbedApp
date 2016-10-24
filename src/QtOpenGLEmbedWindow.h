@@ -79,6 +79,8 @@ public:
         int windowH;
 	ofGLWindowSettings getSettings(){ return settings; }
 
+	void resize_cb(int w, int h);
+
 private:
 	static void display(void);
 	static void mouse_cb(int button, int state, int x, int y);
@@ -89,7 +91,6 @@ private:
 	static void keyboard_up_cb(unsigned char key, int x, int y);
 	static void special_key_cb(int key, int x, int y) ;
 	static void special_key_up_cb(int key, int x, int y) ;
-	static void resize_cb(int w, int h);
 	static void entry_cb(int state);
 	static void exit_cb();
 	static void dragEvent(char ** fileNames, int howManyFiles, int dragX, int dragY);

@@ -620,12 +620,10 @@ void QtOpenGLEmbedWindow::special_key_up_cb(int key, int x, int y) {
 
 //------------------------------------------------------------
 void QtOpenGLEmbedWindow::resize_cb(int w, int h) {
-//	windowW = w;
-//	windowH = h;
-
-	instance->events().notifyWindowResized(w, h);
-
-	nFramesSinceWindowResized = 0;
+    windowW = w;
+    windowH = h;
+    instance->events().notifyWindowResized(w, h);
+    nFramesSinceWindowResized = 0;
 }
 
 //------------------------------------------------------------

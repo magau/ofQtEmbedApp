@@ -4,9 +4,12 @@
 #include <QtOpenGL/QGLWidget>
 #include <QtOpenGL/QGLFormat>
 #include <QtCore/QTimer>
+#include <QtCore/QSize>
+#include <QtGui/QResizeEvent>
 //#include <QGLShaderProgram>
 //#include "ofqtCamera.h"
 
+class ofQtAppInterface;
 
 namespace ofqt {
 
@@ -26,6 +29,8 @@ class ofqtGlWidget : public QGLWidget
          */
         //ofqtCamera& getCurrentCamera() const;
 
+        void setAppInterface(ofQtAppInterface* appInterface_ptr);
+
     protected:
         /* Initializes the OpenGL rendering context for the current widget
          * instance.
@@ -41,9 +46,11 @@ class ofqtGlWidget : public QGLWidget
          * widget is first displayed, as it gets a resize event automatically.
          */
         void resizeGL();
+        void resizeEvent(QResizeEvent * event);
 
     private:
         QTimer _internal_timer;
+        ofQtAppInterface* appInterface;
         //ofqtCamera * _camera;
         //QGLShaderProgram * _program;
 };
