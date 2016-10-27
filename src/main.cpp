@@ -1,9 +1,10 @@
 #include "ofMain.h"
 #include "ofApp.h"
+#include "ofAppQGLEmbedWindow.h"
 
 //========================================================================
 int main(int argc, char *argv[]){
-        QtOpenGLEmbedWindow ofQtWindow; // create a window
+        ofAppQGLEmbedWindow ofQtWindow; // create a window
 
         ofQtWindow.qtAppInit(argc, argv);
         

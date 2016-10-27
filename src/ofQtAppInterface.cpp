@@ -1,8 +1,13 @@
-#include <ui_QtEmbedApp.h> 
-
+#include <ofAppQtUi.h> 
+/* The "ofAppQtUi.h" header file is
+ * automatically generated; do not edit
+ * 
+ * uic src/ofAppQt.ui > src/ofAppQtUi.h
+ */
 #include "ofQtAppInterface.h"
-#include "QtOpenGLEmbedWindow.h"
-#include "ofqtGlWidget.h"
+#include "ofAppQGLEmbedWindow.h"
+#include "ofQtGlWidget.h"
+using namespace ofQt;
 
 #include "ofGLRenderer.h"
 #include <QtGui/QVBoxLayout>
@@ -17,7 +22,7 @@
 ofQtAppInterface::ofQtAppInterface(int argc, char *argv[]) :
                                   app(new QApplication(argc, argv)),
                                   mainWindow(new QMainWindow),
-                                  ui(new Ui::openframeworks) {
+                                  ui(new Ui::mainWindow) {
 
         //cout << "argc: " << argc << endl;
         //vector<std::string> args(argv, argv + argc);
@@ -70,14 +75,14 @@ void ofQtAppInterface::resize_cb_interface(int w, int h){
     ofWindow->resize_cb(w, h);
 }
 
-ofqt::ofqtGlWidget *ofQtAppInterface::createEmbedWindow(QtOpenGLEmbedWindow *ofWindow_ptr){
+ofQtGlWidget *ofQtAppInterface::createEmbedWindow(ofAppQGLEmbedWindow *ofWindow_ptr){
     ofWindow = ofWindow_ptr;
     QGLFormat format;
     format.setVersion(3, 0);
     format.setRgba(true);
     format.setDoubleBuffer(true);
     format.setDepth(true);
-    embedWindow = new ofqt::ofqtGlWidget(format);
+    embedWindow = new ofQtGlWidget(format);
     embedWindow->setAppInterface(this);
     embedWindow->makeCurrent();
     return embedWindow; 

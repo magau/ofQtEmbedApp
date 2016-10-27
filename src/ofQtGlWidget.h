@@ -1,5 +1,6 @@
-#ifndef OFQTGLWIDGET_H
-#define OFQTGLWIDGET_H 1
+#pragma once
+//#ifndef OFQTGLWIDGET_H
+//#define OFQTGLWIDGET_H 1
 
 #include <QtOpenGL/QGLWidget>
 #include <QtOpenGL/QGLFormat>
@@ -7,17 +8,17 @@
 #include <QtCore/QSize>
 #include <QtGui/QResizeEvent>
 //#include <QGLShaderProgram>
-//#include "ofqtCamera.h"
+//#include "ofQtCamera.h"
 
 class ofQtAppInterface;
 
-namespace ofqt {
+namespace ofQt {
 
-class ofqtGlWidget : public QGLWidget
+class ofQtGlWidget : public QGLWidget
 {
     public:
-        ofqtGlWidget(QGLFormat format);
-        ~ofqtGlWidget() {}
+        ofQtGlWidget(QGLFormat format);
+        ~ofQtGlWidget() {}
 
         /* Static function to create a new instance of the wanted OpenGL
          * context.
@@ -27,7 +28,7 @@ class ofqtGlWidget : public QGLWidget
         /* Returns a reference to the current camera object that
          * is associated with the class instance.
          */
-        //ofqtCamera& getCurrentCamera() const;
+        //ofQtCamera& getCurrentCamera() const;
 
         void setAppInterface(ofQtAppInterface* appInterface_ptr);
 
@@ -51,10 +52,10 @@ class ofqtGlWidget : public QGLWidget
     private:
         QTimer _internal_timer;
         ofQtAppInterface* appInterface;
-        //ofqtCamera * _camera;
+        //ofQtCamera * _camera;
         //QGLShaderProgram * _program;
 };
 
 };
 
-#endif /* OFQTGLWIDGET_H */
+//#endif /* OFQTGLWIDGET_H */

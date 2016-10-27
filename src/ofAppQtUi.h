@@ -22,7 +22,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Ui_openframeworks
+class Ui_mainWindow
 {
 public:
     QWidget *centralwidget;
@@ -31,12 +31,12 @@ public:
     QVBoxLayout *ofVerticalLayout;
     QMenuBar *menubar;
 
-    void setupUi(QMainWindow *openframeworks)
+    void setupUi(QMainWindow *mainWindow)
     {
-        if (openframeworks->objectName().isEmpty())
-            openframeworks->setObjectName(QString::fromUtf8("openframeworks"));
-        openframeworks->resize(448, 208);
-        centralwidget = new QWidget(openframeworks);
+        if (mainWindow->objectName().isEmpty())
+            mainWindow->setObjectName(QString::fromUtf8("mainWindow"));
+        mainWindow->resize(448, 208);
+        centralwidget = new QWidget(mainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         horizontalLayout = new QHBoxLayout(centralwidget);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
@@ -52,26 +52,26 @@ public:
 
         horizontalLayout->addWidget(ofWindow);
 
-        openframeworks->setCentralWidget(centralwidget);
-        menubar = new QMenuBar(openframeworks);
+        mainWindow->setCentralWidget(centralwidget);
+        menubar = new QMenuBar(mainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
         menubar->setGeometry(QRect(0, 0, 448, 25));
-        openframeworks->setMenuBar(menubar);
+        mainWindow->setMenuBar(menubar);
 
-        retranslateUi(openframeworks);
+        retranslateUi(mainWindow);
 
-        QMetaObject::connectSlotsByName(openframeworks);
+        QMetaObject::connectSlotsByName(mainWindow);
     } // setupUi
 
-    void retranslateUi(QMainWindow *openframeworks)
+    void retranslateUi(QMainWindow *mainWindow)
     {
-        openframeworks->setWindowTitle(QApplication::translate("openframeworks", "openframeworks", 0, QApplication::UnicodeUTF8));
+        mainWindow->setWindowTitle(QApplication::translate("mainWindow", "openframeworks", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
 
 namespace Ui {
-    class openframeworks: public Ui_openframeworks {};
+    class mainWindow: public Ui_mainWindow {};
 } // namespace Ui
 
 QT_END_NAMESPACE

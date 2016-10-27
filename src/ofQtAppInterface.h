@@ -1,27 +1,29 @@
+#pragma once
+
 class ofGLWindowSettings;
-class QtOpenGLEmbedWindow;
+class ofAppQGLEmbedWindow;
 class QApplication;
 class QMainWindow;
 namespace Ui {
-    class openframeworks;
+    class mainWindow;
 }
-class QtOpenGLEmbedWindow;
-namespace ofqt {
-    class ofqtGlWidget;
+class ofAppQGLEmbedWindow;
+namespace ofQt {
+    class ofQtGlWidget;
 }
 
 class ofQtAppInterface{
     private:
     QApplication *app; //Qt app 
     QMainWindow *mainWindow;
-    Ui::openframeworks *ui;
-    QtOpenGLEmbedWindow *ofWindow;
+    Ui::mainWindow *ui;
+    ofAppQGLEmbedWindow *ofWindow;
     public:
-    ofqt::ofqtGlWidget *embedWindow;
+    ofQt::ofQtGlWidget *embedWindow;
     ofQtAppInterface(int argc, char *argv[]);
     ~ofQtAppInterface();
     void setupUi();
-    ofqt::ofqtGlWidget *createEmbedWindow(QtOpenGLEmbedWindow *ofWindow_ptr);
+    ofQt::ofQtGlWidget *createEmbedWindow(ofAppQGLEmbedWindow *ofWindow_ptr);
     void show();
     int exec();
     void resize_cb_interface(int w, int h);

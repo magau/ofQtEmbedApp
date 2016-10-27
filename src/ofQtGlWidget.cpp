@@ -2,11 +2,11 @@
 //#include <QGLShader>
 
 #include "ofQtAppInterface.h"
-#include "ofqtGlWidget.h"
+#include "ofQtGlWidget.h"
 
-using namespace ofqt;
+using namespace ofQt;
 
-ofqtGlWidget::ofqtGlWidget(QGLFormat format) : QGLWidget(format)
+ofQtGlWidget::ofQtGlWidget(QGLFormat format) : QGLWidget(format)
 {
     /* Connect the internal timer to the method that will control the widget
      * redraw call.
@@ -34,7 +34,7 @@ ofqtGlWidget::ofqtGlWidget(QGLFormat format) : QGLWidget(format)
     /* Perform other initializations here */
 
     /* Initialize the camera for the current widget */
-    //_camera = new ofqtCamera();
+    //_camera = new ofQtCamera();
     //_program = new QGLShaderProgram();
 
     /* end */
@@ -44,7 +44,7 @@ ofqtGlWidget::ofqtGlWidget(QGLFormat format) : QGLWidget(format)
 }
 
 
-QGLFormat ofqtGlWidget::createOpenGLContextFormat()
+QGLFormat ofQtGlWidget::createOpenGLContextFormat()
 {
     QGLFormat format;
 
@@ -57,13 +57,13 @@ QGLFormat ofqtGlWidget::createOpenGLContextFormat()
 }
 
 
-//ofqtCamera& ofqtGlWidget::getCurrentCamera() const
+//ofQtCamera& ofQtGlWidget::getCurrentCamera() const
 //{
 //    return *_camera;
 //}
 
 
-void ofqtGlWidget::initializeGL()
+void ofQtGlWidget::initializeGL()
 {
     /* Set the clear color to complete black.
      */
@@ -93,18 +93,18 @@ void ofqtGlWidget::initializeGL()
 }
 
 
-void ofqtGlWidget::paintGL()
+void ofQtGlWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
 
-void ofqtGlWidget::resizeGL()
+void ofQtGlWidget::resizeGL()
 {
 //    getCurrentCamera().setCameraAspect(width() / height());
 }
 
-void ofqtGlWidget::resizeEvent(QResizeEvent * event){
+void ofQtGlWidget::resizeEvent(QResizeEvent * event){
     const QSize& size = event->size();
     appInterface->resize_cb_interface(
         size.width(),
@@ -112,6 +112,6 @@ void ofqtGlWidget::resizeEvent(QResizeEvent * event){
     );
 }
 
-void ofqtGlWidget::setAppInterface(ofQtAppInterface* appInterface_ptr){
+void ofQtGlWidget::setAppInterface(ofQtAppInterface* appInterface_ptr){
     appInterface = appInterface_ptr;
 };

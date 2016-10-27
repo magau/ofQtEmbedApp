@@ -1,8 +1,5 @@
 #pragma once
-
 #include "ofMain.h"
-#include "ofQtAppInterface.h"
-#include "QtOpenGLEmbedWindow.h"
 
 class ofApp : public ofBaseApp{
 	public:

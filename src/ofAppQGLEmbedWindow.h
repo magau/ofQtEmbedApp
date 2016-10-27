@@ -1,30 +1,18 @@
 #pragma once
 
-#include "ofConstants.h"
-#include "ofAppBaseWindow.h"
-#include "ofEvents.h"
-#include "ofTypes.h"
-#include "ofPixels.h"
+#include "ofApp.h"
+#include "ofQtAppInterface.h"
+using namespace ofQt;
 
-namespace ofqt {
-    class ofqtGlWidget;
-}
-class ofBaseApp;
-class ofBaseRenderer;
-class ofQtAppInterface;
-class ofGLWindowSettings;
-//class ofPoint;
-//class QGLWidget;
-
-class QtOpenGLEmbedWindow : public ofAppBaseGLWindow {
+class ofAppQGLEmbedWindow : public ofAppBaseGLWindow {
 
 public:
 
-	QtOpenGLEmbedWindow();
-	~QtOpenGLEmbedWindow();
+	ofAppQGLEmbedWindow();
+	~ofAppQGLEmbedWindow();
 
-	ofqt::ofqtGlWidget *createEmbedWindow(const ofGLWindowSettings *in_settings);
-	ofqt::ofqtGlWidget *get_windowId(){ return windowId; };
+	ofQtGlWidget *createEmbedWindow(const ofGLWindowSettings *in_settings);
+	ofQtGlWidget *get_windowId(){ return windowId; };
 	void qtAppInit(int argc, char *argv[]);
 	int qtAppExec();
 
@@ -104,8 +92,7 @@ private:
 	
 	ofCoreEvents coreEvents;
 	shared_ptr<ofBaseRenderer> currentRenderer;
-	//int windowId;
-        ofqt::ofqtGlWidget* windowId;
+        ofQtGlWidget* windowId;
         ofGLWindowSettings settings;
 };
 

@@ -1,14 +1,8 @@
-#include "QtOpenGLEmbedWindow.h"
-#include "ofBaseApp.h"
-#include "ofConstants.h"
-#include "ofPixels.h"
-#include "ofGLRenderer.h"
+#include "ofAppQGLEmbedWindow.h"
 
 #include "ofIcon.h"
-#include "ofImage.h"
 #include <X11/Xatom.h>
 
-#include "ofQtAppInterface.h"
 
 // glut works with static callbacks UGH, so we need static variables here:
 
@@ -24,11 +18,11 @@ static int 			nonFullScreenX;
 static int 			nonFullScreenY;
 static int          nFramesSinceWindowResized;
 static ofOrientation	orientation;
-static QtOpenGLEmbedWindow * instance;
+static ofAppQGLEmbedWindow * instance;
 
 
 //----------------------------------------------------------
-QtOpenGLEmbedWindow::QtOpenGLEmbedWindow(){
+ofAppQGLEmbedWindow::ofAppQGLEmbedWindow(){
 	windowMode			= OF_WINDOW;
 	bNewScreenMode		= true;
 	nFramesSinceWindowResized = 0;
@@ -46,20 +40,20 @@ QtOpenGLEmbedWindow::QtOpenGLEmbedWindow(){
 	windowId = 0;
 }
 
-QtOpenGLEmbedWindow::~QtOpenGLEmbedWindow(){
+ofAppQGLEmbedWindow::~ofAppQGLEmbedWindow(){
     delete qtApp;
 }
 
-void QtOpenGLEmbedWindow::qtAppInit(int argc, char *argv[]) {
+void ofAppQGLEmbedWindow::qtAppInit(int argc, char *argv[]) {
     qtApp = new ofQtAppInterface(argc, argv);
 }
 
-int QtOpenGLEmbedWindow::qtAppExec() {
+int ofAppQGLEmbedWindow::qtAppExec() {
     int exec_result = qtApp->exec();
     return exec_result;
 }
 
-ofqt::ofqtGlWidget *QtOpenGLEmbedWindow::createEmbedWindow(const ofGLWindowSettings *ptr_settings) {
+ofQtGlWidget *ofAppQGLEmbedWindow::createEmbedWindow(const ofGLWindowSettings *ptr_settings) {
     settings.windowMode = ptr_settings->windowMode;
     settings.width = ptr_settings->width;
     settings.height = ptr_settings->height;
@@ -73,17 +67,17 @@ ofqt::ofqtGlWidget *QtOpenGLEmbedWindow::createEmbedWindow(const ofGLWindowSetti
 // "rgba double samples>=4 depth" ( mac )
 // "rgb double depth alpha samples>=4" ( some pcs )
 //------------------------------------------------------------
- void QtOpenGLEmbedWindow::setGlutDisplayString(string displayStr){
+ void ofAppQGLEmbedWindow::setGlutDisplayString(string displayStr){
 	displayString = displayStr;
  }
 
  //------------------------------------------------------------
-void QtOpenGLEmbedWindow::setDoubleBuffering(bool _bDoubleBuffered){ 
+void ofAppQGLEmbedWindow::setDoubleBuffering(bool _bDoubleBuffered){ 
 	bDoubleBuffered = _bDoubleBuffered;
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::setup(const ofGLWindowSettings & in_settings){
+void ofAppQGLEmbedWindow::setup(const ofGLWindowSettings & in_settings){
 
         createEmbedWindow(&in_settings);
 	bNewScreenMode = true;
@@ -164,7 +158,7 @@ ofRestoreWorkingDirectoryToDefault();
 
 #ifdef TARGET_LINUX
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::setWindowIcon(const string & path){
+void ofAppQGLEmbedWindow::setWindowIcon(const string & path){
 ofPixels iconPixels;
 ofLoadImage(iconPixels,path);
 setWindowIcon(iconPixels);
@@ -174,7 +168,7 @@ setWindowIcon(iconPixels);
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::setWindowIcon(const ofPixels & iconPixels){
+void ofAppQGLEmbedWindow::setWindowIcon(const ofPixels & iconPixels){
 iconSet = true;
 Display *m_display = glXGetCurrentDisplay();
 GLXDrawable m_window = glXGetCurrentDrawable();
@@ -198,17 +192,17 @@ XFlush(m_display);
 #endif
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::update(){
+void ofAppQGLEmbedWindow::update(){
 idle_cb();
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::draw(){
+void ofAppQGLEmbedWindow::draw(){
 display();
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::close(){
+void ofAppQGLEmbedWindow::close(){
 events().notifyExit();
 events().disable();
 //#ifdef TARGET_LINUX
@@ -219,24 +213,24 @@ events().disable();
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::loop(){
+void ofAppQGLEmbedWindow::loop(){
 instance->events().notifySetup();
 instance->events().notifyUpdate();
 //	glutMainLoop();
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::setWindowTitle(string title){
+void ofAppQGLEmbedWindow::setWindowTitle(string title){
 //	glutSetWindowTitle(title.c_str());
 }
 
 //------------------------------------------------------------
-ofPoint QtOpenGLEmbedWindow::getWindowSize(){
+ofPoint ofAppQGLEmbedWindow::getWindowSize(){
 return ofPoint(windowW, windowH,0);
 }
 
 //------------------------------------------------------------
-ofPoint QtOpenGLEmbedWindow::getWindowPosition(){
+ofPoint ofAppQGLEmbedWindow::getWindowPosition(){
 int x = 0;//glutGet(GLUT_WINDOW_X);
 int y = 0;//glutGet(GLUT_WINDOW_Y);
 if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
@@ -247,7 +241,7 @@ if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 )
 }
 
 //------------------------------------------------------------
-ofPoint QtOpenGLEmbedWindow::getScreenSize(){
+ofPoint ofAppQGLEmbedWindow::getScreenSize(){
 int width = 500;//glutGet(GLUT_SCREEN_WIDTH);
 int height = 500;//glutGet(GLUT_SCREEN_HEIGHT);
 if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
@@ -258,7 +252,7 @@ if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 )
 }
 
 //------------------------------------------------------------
-int QtOpenGLEmbedWindow::getWidth(){
+int ofAppQGLEmbedWindow::getWidth(){
 if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 	return windowW;
 }
@@ -266,7 +260,7 @@ return windowH;
 }
 
 //------------------------------------------------------------
-int QtOpenGLEmbedWindow::getHeight(){
+int ofAppQGLEmbedWindow::getHeight(){
 if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 	return windowH;
 }
@@ -274,22 +268,22 @@ return windowW;
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::setOrientation(ofOrientation orientationIn){
+void ofAppQGLEmbedWindow::setOrientation(ofOrientation orientationIn){
 orientation = orientationIn;
 }
 
 //------------------------------------------------------------
-ofOrientation QtOpenGLEmbedWindow::getOrientation(){
+ofOrientation ofAppQGLEmbedWindow::getOrientation(){
 return orientation;
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::setWindowPosition(int x, int y){
+void ofAppQGLEmbedWindow::setWindowPosition(int x, int y){
 //glutPositionWindow(x,y);
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::setWindowShape(int w, int h){
+void ofAppQGLEmbedWindow::setWindowShape(int w, int h){
 //	glutReshapeWindow(w, h);
 // this is useful, esp if we are in the first frame (setup):
 requestedWidth  = w;
@@ -297,7 +291,7 @@ requestedHeight = h;
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::hideCursor(){
+void ofAppQGLEmbedWindow::hideCursor(){
 #if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
 	 CGDisplayHideCursor(0);
 #else
@@ -306,7 +300,7 @@ void QtOpenGLEmbedWindow::hideCursor(){
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::showCursor(){
+void ofAppQGLEmbedWindow::showCursor(){
 #if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
 	 CGDisplayShowCursor(0);
 #else
@@ -315,12 +309,12 @@ void QtOpenGLEmbedWindow::showCursor(){
 }
 
 //------------------------------------------------------------
-ofWindowMode QtOpenGLEmbedWindow::getWindowMode(){
+ofWindowMode ofAppQGLEmbedWindow::getWindowMode(){
 return windowMode;
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::toggleFullscreen(){
+void ofAppQGLEmbedWindow::toggleFullscreen(){
 if( windowMode == OF_GAME_MODE)return;
 
 if( windowMode == OF_WINDOW ){
@@ -333,7 +327,7 @@ bNewScreenMode = true;
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::setFullscreen(bool fullscreen){
+void ofAppQGLEmbedWindow::setFullscreen(bool fullscreen){
 if( windowMode == OF_GAME_MODE)return;
 
 if(fullscreen && windowMode != OF_FULLSCREEN){
@@ -346,17 +340,17 @@ windowMode      = OF_WINDOW;
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::enableSetupScreen(){
+void ofAppQGLEmbedWindow::enableSetupScreen(){
 bEnableSetupScreen = true;
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::disableSetupScreen(){
+void ofAppQGLEmbedWindow::disableSetupScreen(){
 bEnableSetupScreen = false;
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::setVerticalSync(bool bSync){
+void ofAppQGLEmbedWindow::setVerticalSync(bool bSync){
 //----------------------------
 //--------------------------------------
 #ifdef TARGET_OSX
@@ -392,17 +386,17 @@ void QtOpenGLEmbedWindow::setVerticalSync(bool bSync){
 }
 
 //------------------------------------------------------------
-ofCoreEvents & QtOpenGLEmbedWindow::events(){
+ofCoreEvents & ofAppQGLEmbedWindow::events(){
 return coreEvents;
 }
 
 //------------------------------------------------------------
-shared_ptr<ofBaseRenderer> & QtOpenGLEmbedWindow::renderer(){
+shared_ptr<ofBaseRenderer> & ofAppQGLEmbedWindow::renderer(){
 return currentRenderer;
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::display(void){
+void ofAppQGLEmbedWindow::display(void){
 
 //--------------------------------
 // when I had "glutFullScreen()"
@@ -527,7 +521,7 @@ static void rotateMouseXY(ofOrientation orientation, int w, int h, int &x, int &
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::mouse_cb(int button, int state, int x, int y) {
+void ofAppQGLEmbedWindow::mouse_cb(int button, int state, int x, int y) {
 	rotateMouseXY(orientation, instance->getWidth(), instance->getHeight(), x, y);
     
 
@@ -555,7 +549,7 @@ void QtOpenGLEmbedWindow::mouse_cb(int button, int state, int x, int y) {
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::motion_cb(int x, int y) {
+void ofAppQGLEmbedWindow::motion_cb(int x, int y) {
 	rotateMouseXY(orientation, instance->getWidth(), instance->getHeight(), x, y);
 
 	if (instance->events().getFrameNum() > 0){
@@ -565,7 +559,7 @@ void QtOpenGLEmbedWindow::motion_cb(int x, int y) {
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::passive_motion_cb(int x, int y) {
+void ofAppQGLEmbedWindow::passive_motion_cb(int x, int y) {
 	rotateMouseXY(orientation, instance->getWidth(), instance->getHeight(), x, y);
 
 	if (instance->events().getFrameNum() > 0){
@@ -574,7 +568,7 @@ void QtOpenGLEmbedWindow::passive_motion_cb(int x, int y) {
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::dragEvent(char ** names, int howManyFiles, int dragX, int dragY){
+void ofAppQGLEmbedWindow::dragEvent(char ** names, int howManyFiles, int dragX, int dragY){
 
 	// TODO: we need position info on mac passed through
 	ofDragInfo info;
@@ -591,7 +585,7 @@ void QtOpenGLEmbedWindow::dragEvent(char ** names, int howManyFiles, int dragX, 
 
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::idle_cb(void) {
+void ofAppQGLEmbedWindow::idle_cb(void) {
 	instance->events().notifyUpdate();
 
 //	glutPostRedisplay();
@@ -599,27 +593,27 @@ void QtOpenGLEmbedWindow::idle_cb(void) {
 
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::keyboard_cb(unsigned char key, int x, int y) {
+void ofAppQGLEmbedWindow::keyboard_cb(unsigned char key, int x, int y) {
 	instance->events().notifyKeyPressed(key);
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::keyboard_up_cb(unsigned char key, int x, int y){
+void ofAppQGLEmbedWindow::keyboard_up_cb(unsigned char key, int x, int y){
 	instance->events().notifyKeyReleased(key);
 }
 
 //------------------------------------------------------
-void QtOpenGLEmbedWindow::special_key_cb(int key, int x, int y) {
+void ofAppQGLEmbedWindow::special_key_cb(int key, int x, int y) {
 	instance->events().notifyKeyPressed(key | OF_KEY_MODIFIER);
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::special_key_up_cb(int key, int x, int y) {
+void ofAppQGLEmbedWindow::special_key_up_cb(int key, int x, int y) {
 	instance->events().notifyKeyReleased(key | OF_KEY_MODIFIER);
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::resize_cb(int w, int h) {
+void ofAppQGLEmbedWindow::resize_cb(int w, int h) {
     windowW = w;
     windowH = h;
     instance->events().notifyWindowResized(w, h);
@@ -627,7 +621,7 @@ void QtOpenGLEmbedWindow::resize_cb(int w, int h) {
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::entry_cb(int state) {
+void ofAppQGLEmbedWindow::entry_cb(int state) {
 //	if (state == GLUT_ENTERED){
 //		instance->events().notifyMouseEntered(instance->events().getMouseX(), instance->events().getMouseY());
 //	}else if (state == GLUT_LEFT){
@@ -636,7 +630,7 @@ void QtOpenGLEmbedWindow::entry_cb(int state) {
 }
 
 //------------------------------------------------------------
-void QtOpenGLEmbedWindow::exit_cb() {
+void ofAppQGLEmbedWindow::exit_cb() {
 	instance->events().notifyExit();
 	instance->events().disable();
 }
