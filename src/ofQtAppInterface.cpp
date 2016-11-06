@@ -4,10 +4,10 @@
  * 
  * uic src/ofAppQt.ui > src/ofAppQtUi.h
  */
+#include "ofApp.h"
 #include "ofQtAppInterface.h"
 #include "ofAppQGLEmbedWindow.h"
 #include "ofQtGlWidget.h"
-using namespace ofQt;
 
 #include "ofGLRenderer.h"
 #include <QtGui/QVBoxLayout>
@@ -20,7 +20,8 @@ using namespace ofQt;
 #include <iostream>
 
 ofQtAppInterface::ofQtAppInterface(int argc, char *argv[]) :
-                                  app(new QApplication(argc, argv)),
+                                  qt_app(new QApplication(argc, argv)),
+                                  of_app( new ofApp()),
                                   mainWindow(new QMainWindow),
                                   ui(new Ui::mainWindow) {
 
@@ -38,7 +39,8 @@ ofQtAppInterface::~ofQtAppInterface(){
     //std::cout << "delete embedWindow" << std::endl;
     //delete embedWindow;
     //std::cout << "done" << std::endl;
-    delete app;
+    delete of_app;
+    delete qt_app;
 }
 
 
@@ -87,13 +89,21 @@ ofQtGlWidget *ofQtAppInterface::createEmbedWindow(ofAppQGLEmbedWindow *ofWindow_
     embedWindow->makeCurrent();
     return embedWindow; 
 }
-void ofQtAppInterface::show(){
+void ofQtAppInterface::setup(){
     setupUi();
+    embedWindow->setAppInterface(this);
+    of_app->setup();
     embedWindow->show();
     mainWindow->show();
 }
 
+void ofQtAppInterface::update(){
+    of_app->update();
+    of_app->draw();
+    //ofWindow->draw();
+}
+
 int ofQtAppInterface::exec(){
-    show();
-    return app->exec();
+    setup();
+    return qt_app->exec();
 }

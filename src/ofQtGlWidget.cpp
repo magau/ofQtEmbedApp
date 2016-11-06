@@ -67,7 +67,7 @@ void ofQtGlWidget::initializeGL()
 {
     /* Set the clear color to complete black.
      */
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+//    glClearColor(0.0, 0.0, 0.0, 0.0);
 
     /* Enable depth testing, as it is required for the
      * corrent rendering behaviour of the mesh.
@@ -95,7 +95,8 @@ void ofQtGlWidget::initializeGL()
 
 void ofQtGlWidget::paintGL()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
+    //glClear(GL_COLOR_BUFFER_BIT);
+    appInterface->update();
 }
 
 

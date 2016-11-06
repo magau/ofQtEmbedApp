@@ -5,6 +5,7 @@
 //========================================================================
 int main(int argc, char *argv[]){
         ofAppQGLEmbedWindow ofQtWindow; // create a window
+        //ofAppGlutWindow ofQtWindow; // create a window
 
         ofQtWindow.qtAppInit(argc, argv);
         
@@ -14,7 +15,7 @@ int main(int argc, char *argv[]){
         // this kicks off the running of my app
         // can be OF_WINDOW or OF_FULLSCREEN
         // pass in width and height too:
-        ofRunApp( new ofApp());
+        //ofRunApp( new ofApp());
 
         return ofQtWindow.qtAppExec(); //Qt app 
 }

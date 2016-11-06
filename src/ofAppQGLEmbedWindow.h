@@ -2,7 +2,6 @@
 
 #include "ofApp.h"
 #include "ofQtAppInterface.h"
-using namespace ofQt;
 
 class ofAppQGLEmbedWindow : public ofAppBaseGLWindow {
 

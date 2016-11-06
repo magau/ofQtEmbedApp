@@ -4,14 +4,15 @@
 void ofApp::setup(){
     ofEnableSmoothing();
     ofSetVerticalSync(true);
+    ofBackground(0);
     ploc.x = ofGetWindowWidth()/2;
     ploc.y = ofGetWindowHeight()/2;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    ploc.x = ofGetMouseX();
-    ploc.y = ofGetMouseY();
+    //ploc.x = ofGetMouseX();
+    //ploc.y = ofGetMouseY();
 }
 
 //--------------------------------------------------------------

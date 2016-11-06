@@ -80,7 +80,7 @@ void ofAppQGLEmbedWindow::setDoubleBuffering(bool _bDoubleBuffered){
 void ofAppQGLEmbedWindow::setup(const ofGLWindowSettings & in_settings){
 
         createEmbedWindow(&in_settings);
-	bNewScreenMode = true;
+//	bNewScreenMode = true;
 	windowMode = settings.windowMode;
 	//requestedWidth  = settings.width;
 	//requestedHeight = settings.height;
@@ -129,30 +129,30 @@ setVerticalSync(true);
 //	glutDragEventFunc(dragEvent);
 //#endif
 
-nFramesSinceWindowResized = 0;
+//nFramesSinceWindowResized = 0;
 
-#ifdef TARGET_LINUX
-if(!iconSet){
-	ofPixels iconPixels;
-	#ifdef DEBUG
-		iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
-		GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
-	#else
-		iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
-		GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
-	#endif
-	setWindowIcon(iconPixels);
-}
-#endif
-if (settings.isPositionSet()) {
-	setWindowPosition(settings.getPosition().x,settings.getPosition().y);
-}
+//#ifdef TARGET_LINUX
+//if(!iconSet){
+//	ofPixels iconPixels;
+//	#ifdef DEBUG
+//		iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
+//		GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
+//	#else
+//		iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
+//		GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
+//	#endif
+//	setWindowIcon(iconPixels);
+//}
+//#endif
+//if (settings.isPositionSet()) {
+//	setWindowPosition(settings.getPosition().x,settings.getPosition().y);
+//}
 
-#ifdef TARGET_OSX
-// The osx implementation of glut changes the cwd, this restores it
-// to wherever it was when the app was started
-ofRestoreWorkingDirectoryToDefault();
-#endif
+//#ifdef TARGET_OSX
+//// The osx implementation of glut changes the cwd, this restores it
+//// to wherever it was when the app was started
+//ofRestoreWorkingDirectoryToDefault();
+//#endif
 
 }
 
