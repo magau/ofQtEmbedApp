@@ -10,10 +10,10 @@
 #include "ofQtGlWidget.h"
 
 #include "ofGLRenderer.h"
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QSizePolicy>
-#include <QtCore/QString>
+//#include <QtGui/QVBoxLayout>
+//#include <QtGui/QHBoxLayout>
+//#include <QtGui/QSizePolicy>
+//#include <QtCore/QString>
 #include <QtOpenGL/QGLFormat>
 #include <GL/glxext.h>
 #include <GL/glx.h>
@@ -100,7 +100,6 @@ void ofQtAppInterface::setup(){
 void ofQtAppInterface::update(){
     of_app->update();
     of_app->draw();
-    //ofWindow->draw();
 }
 
 int ofQtAppInterface::exec(){
