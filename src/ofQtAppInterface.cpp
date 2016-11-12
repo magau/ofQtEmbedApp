@@ -69,8 +69,6 @@ void ofQtAppInterface::setupUi() {
 
     mainWindow->resize(ofWindow->windowW,
                        ofWindow->windowH);   
-    ofWindow->windowW = embedWindow->width();
-    ofWindow->windowH = embedWindow->height();
 }
 
 void ofQtAppInterface::resize_cb_interface(int w, int h){
@@ -90,8 +88,13 @@ ofQtGlWidget *ofQtAppInterface::createEmbedWindow(ofAppQGLEmbedWindow *ofWindow_
     return embedWindow; 
 }
 void ofQtAppInterface::setup(){
+    cout << "ofApp.setup()" << endl;
+    cout << "W: " << (ofWindow->windowW) << "H" << (ofWindow->windowH) << endl;
     setupUi();
-    embedWindow->setAppInterface(this);
+    cout << "embedWindow" << endl;
+    cout << "W: " << (embedWindow->width()) << "H" << (embedWindow->height()) << endl;
+    //ofWindow->windowW = embedWindow->width();
+    //ofWindow->windowH = embedWindow->height();
     of_app->setup();
     embedWindow->show();
     mainWindow->show();
@@ -103,6 +106,5 @@ void ofQtAppInterface::update(){
 }
 
 int ofQtAppInterface::exec(){
-    setup();
     return qt_app->exec();
 }

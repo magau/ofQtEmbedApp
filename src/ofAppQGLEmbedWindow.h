@@ -12,7 +12,7 @@ public:
 
 	ofQtGlWidget *get_windowId(){ return windowId; };
 	void qtAppInit(int argc, char *argv[]);
-	int qtAppExec();
+	int qtAppExec(int argc, char *argv[]);
 
 	static bool doesLoop(){ return true; }
 	static bool allowsMultiWindow(){ return false; }
