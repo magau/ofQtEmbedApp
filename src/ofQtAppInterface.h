@@ -30,5 +30,7 @@ class ofQtAppInterface{
     void setup();
     void update();
     int exec();
-    void resize_cb_interface(int w, int h);
+    void of_resize(int w, int h);
+    int get_width();
+    int get_height();
 };

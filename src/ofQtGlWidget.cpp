@@ -107,7 +107,7 @@ void ofQtGlWidget::resizeGL()
 
 void ofQtGlWidget::resizeEvent(QResizeEvent * event){
     const QSize& size = event->size();
-    appInterface->resize_cb_interface(
+    appInterface->of_resize(
         size.width(),
         size.height()
     );
