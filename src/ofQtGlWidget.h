@@ -6,7 +6,9 @@
 #include <QtOpenGL/QGLFormat>
 #include <QtCore/QTimer>
 #include <QtCore/QSize>
+#include <QtCore/QPoint>
 #include <QtGui/QResizeEvent>
+#include <QtGui/QMouseEvent>
 //#include <QGLShaderProgram>
 //#include "ofQtCamera.h"
 
@@ -48,6 +50,7 @@ class ofQtGlWidget : public QGLWidget
          */
         void resizeGL();
         void resizeEvent(QResizeEvent * event);
+        void mouseMoveEvent(QMouseEvent * event);
 
     private:
         QTimer _internal_timer;

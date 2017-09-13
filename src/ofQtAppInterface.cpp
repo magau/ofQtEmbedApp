@@ -75,6 +75,12 @@ void ofQtAppInterface::of_resize(int w, int h){
     ofWindow->resize_cb(w, h);
 }
 
+
+void ofQtAppInterface::of_mouse_move(int x, int y){
+    //y -= ofWindow->windowH; 
+    ofWindow->motion_cb(x, y);
+}
+
 ofQtGlWidget *ofQtAppInterface::createEmbedWindow(ofAppQGLEmbedWindow *ofWindow_ptr){
     ofWindow = ofWindow_ptr;
     QGLFormat format;

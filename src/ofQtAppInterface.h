@@ -31,6 +31,7 @@ class ofQtAppInterface{
     void update();
     int exec();
     void of_resize(int w, int h);
+    void of_mouse_move(int x, int y);
     int get_width();
     int get_height();
 };

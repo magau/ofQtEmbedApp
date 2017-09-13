@@ -33,7 +33,7 @@ ofAppQGLEmbedWindow::ofAppQGLEmbedWindow(int winW, int winH, ofWindowMode winMod
 //  nonFullScreenX      = -1;
 //  nonFullScreenY      = -1;
 //  displayString       = "";
-//  orientation         = OF_ORIENTATION_DEFAULT;
+  orientation         = OF_ORIENTATION_DEFAULT;
 //  bDoubleBuffered = true; // LIA
 //  iconSet = false;
 //  windowId = 0;
@@ -548,8 +548,14 @@ void ofAppQGLEmbedWindow::mouse_cb(int button, int state, int x, int y) {
 
 //------------------------------------------------------------
 void ofAppQGLEmbedWindow::motion_cb(int x, int y) {
+        
     rotateMouseXY(orientation, instance->getWidth(), instance->getHeight(), x, y);
 
+    std::cout << "mouse pos x: " << x << " , y: " << y << std::endl;
+    instance->events().notifyMouseMoved(x, y);
+    // notifyMouseMoved implemented at libs/openFrameworks/events/ofEvents.cpp
+    // temporary notifyMouseMoved...
+    // getFrameNum() must be implemented
     if (instance->events().getFrameNum() > 0){
         instance->events().notifyMouseDragged(x, y, buttonInUse);
     }

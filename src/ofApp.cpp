@@ -13,10 +13,10 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    ploc.x = ofGetWindowWidth()/2;
-    ploc.y = ofGetWindowHeight()/2;
-    //ploc.x = ofGetMouseX();
-    //ploc.y = ofGetMouseY();
+    //ploc.x = ofGetWindowWidth()/2;
+    //ploc.y = ofGetWindowHeight()/2;
+    ploc.x = ofGetMouseX();
+    ploc.y = ofGetMouseY();
 }
 
 //--------------------------------------------------------------

@@ -113,6 +113,16 @@ void ofQtGlWidget::resizeEvent(QResizeEvent * event){
     );
 }
 
+void ofQtGlWidget::mouseMoveEvent(QMouseEvent * event){
+    //TODO: Initialize with enable mouse tracking.
+    //      Default behavior for move event only triggered on button pressed...
+    const QPoint& pos = event->pos();
+    appInterface->of_mouse_move(
+        pos.x(),
+        pos.y()
+    );
+}
+
 void ofQtGlWidget::setAppInterface(ofQtAppInterface* appInterface_ptr){
     appInterface = appInterface_ptr;
 };
