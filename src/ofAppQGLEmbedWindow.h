@@ -67,9 +67,9 @@ public:
 
 	void resize_cb(int w, int h);
 	void motion_cb(int x, int y);
+	void mouse_cb(int button, int state, int x, int y);
 
 private:
-	static void mouse_cb(int button, int state, int x, int y);
 	static void display(void);
 	static void passive_motion_cb(int x, int y);
 	static void idle_cb(void);

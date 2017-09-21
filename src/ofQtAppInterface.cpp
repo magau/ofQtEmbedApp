@@ -77,8 +77,27 @@ void ofQtAppInterface::of_resize(int w, int h){
 
 
 void ofQtAppInterface::of_mouse_move(int x, int y){
-    //y -= ofWindow->windowH; 
-    ofWindow->motion_cb(x, y);
+    ofWindow->motion_cb(x, ofWindow->windowH - y);
+}
+
+void ofQtAppInterface::of_mouse_button(int button, int state, int x, int y){
+
+    switch(button){
+    case Qt::LeftButton:
+        ofWindow->mouse_cb(OF_MOUSE_BUTTON_LEFT, state, x, ofWindow->windowH - y);
+        break;
+    case Qt::RightButton:
+        ofWindow->mouse_cb(OF_MOUSE_BUTTON_RIGHT, state, x, ofWindow->windowH - y);
+        break;
+    case Qt::MiddleButton:
+        ofWindow->mouse_cb(OF_MOUSE_BUTTON_MIDDLE, state, x, ofWindow->windowH - y);
+        break;
+    }
+}
+
+std::pair<int, int> ofQtAppInterface::get_window_pos(){
+    return std::pair<int, int>(embedWindow->pos().x(),
+                               embedWindow->pos().y());
 }
 
 ofQtGlWidget *ofQtAppInterface::createEmbedWindow(ofAppQGLEmbedWindow *ofWindow_ptr){

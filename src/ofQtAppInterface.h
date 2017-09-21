@@ -32,6 +32,8 @@ class ofQtAppInterface{
     int exec();
     void of_resize(int w, int h);
     void of_mouse_move(int x, int y);
+    void of_mouse_button(int button, int state, int x, int y);
+    std::pair<int,int> get_window_pos();
     int get_width();
     int get_height();
 };

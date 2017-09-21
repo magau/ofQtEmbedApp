@@ -14,8 +14,8 @@ static bool         bDoubleBuffered;
 
 static int          requestedWidth;
 static int          requestedHeight;
-static int          nonFullScreenX;
-static int          nonFullScreenY;
+//static int          nonFullScreenX;
+//static int          nonFullScreenY;
 static int          nFramesSinceWindowResized;
 static ofOrientation    orientation;
 static ofAppQGLEmbedWindow * instance;
@@ -26,7 +26,7 @@ ofAppQGLEmbedWindow::ofAppQGLEmbedWindow(int winW, int winH, ofWindowMode winMod
 //  windowMode          = OF_WINDOW;
 //  bNewScreenMode      = true;
 //  nFramesSinceWindowResized = 0;
-//  buttonInUse         = 0;
+  buttonInUse         = -1;
 //  bEnableSetupScreen  = true;
 //  requestedWidth      = 0;
 //  requestedHeight     = 0;
@@ -34,6 +34,7 @@ ofAppQGLEmbedWindow::ofAppQGLEmbedWindow(int winW, int winH, ofWindowMode winMod
 //  nonFullScreenY      = -1;
 //  displayString       = "";
   orientation         = OF_ORIENTATION_DEFAULT;
+  //orientation         = OF_ORIENTATION_180;
 //  bDoubleBuffered = true; // LIA
 //  iconSet = false;
 //  windowId = 0;
@@ -229,8 +230,13 @@ ofPoint ofAppQGLEmbedWindow::getWindowSize(){
 
 //------------------------------------------------------------
 ofPoint ofAppQGLEmbedWindow::getWindowPosition(){
-int x = 0;//glutGet(GLUT_WINDOW_X);
-int y = 0;//glutGet(GLUT_WINDOW_Y);
+    
+    int x ,y;
+    std::pair<int, int>win_pos = qtApp->get_window_pos();
+    x = win_pos.first;
+    y = win_pos.second;
+    //std::cout << "x: " << x << " y: " << y << endl;
+
 if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
     return ofPoint(x,y,0);
 }else{
@@ -523,27 +529,22 @@ void ofAppQGLEmbedWindow::mouse_cb(int button, int state, int x, int y) {
     rotateMouseXY(orientation, instance->getWidth(), instance->getHeight(), x, y);
     
 
-//  switch(button){
-//  case GLUT_LEFT_BUTTON:
-//      button = OF_MOUSE_BUTTON_LEFT;
-//      break;
-//  case GLUT_RIGHT_BUTTON:
-//      button = OF_MOUSE_BUTTON_RIGHT;
-//      break;
-//  case GLUT_MIDDLE_BUTTON:
-//      button = OF_MOUSE_BUTTON_MIDDLE;
-//      break;
-//  }
-    
-    if (instance->events().getFrameNum() > 0){
-//      if (state == GLUT_DOWN) {
-//          instance->events().notifyMousePressed(x, y, button);
-//      } else if (state == GLUT_UP) {
-//          instance->events().notifyMouseReleased(x, y, button);
-//      }
-//
+    //std::cout << "OF_MOUSE_BUTTON_RIGHT: " << OF_MOUSE_BUTTON_RIGHT << " OF_MOUSE_BUTTON_LEFT: " << OF_MOUSE_BUTTON_LEFT << " OF_MOUSE_BUTTON_MIDDLE: " << OF_MOUSE_BUTTON_MIDDLE << std::endl;
+   
+    //std::cout << "button: " << button;
+    // if (instance->events().getFrameNum() > 0){
+      if (state == 1) {
+          instance->events().notifyMousePressed(x, y, button);
+          //std::cout << " pressed" ;
         buttonInUse = button;
-    }
+      } else if (state == 2) {
+          instance->events().notifyMouseReleased(x, y, button);
+          //std::cout << " released" ;
+        buttonInUse = -1;
+      }
+
+    //}
+    //std::cout << std::endl;
 }
 
 //------------------------------------------------------------
@@ -551,12 +552,12 @@ void ofAppQGLEmbedWindow::motion_cb(int x, int y) {
         
     rotateMouseXY(orientation, instance->getWidth(), instance->getHeight(), x, y);
 
-    std::cout << "mouse pos x: " << x << " , y: " << y << std::endl;
+    //std::cout << "mouse pos x: " << x << " , y: " << y << std::endl;
     instance->events().notifyMouseMoved(x, y);
     // notifyMouseMoved implemented at libs/openFrameworks/events/ofEvents.cpp
-    // temporary notifyMouseMoved...
     // getFrameNum() must be implemented
-    if (instance->events().getFrameNum() > 0){
+    //if (instance->events().getFrameNum() > 0){
+    if (buttonInUse != -1){
         instance->events().notifyMouseDragged(x, y, buttonInUse);
     }
 

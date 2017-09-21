@@ -41,6 +41,9 @@ ofQtGlWidget::ofQtGlWidget(QGLFormat format) : QGLWidget(format)
 
     /* Start running the timer. */
     _internal_timer.start();
+
+    setMouseTracking(true);
+
 }
 
 
@@ -114,12 +117,27 @@ void ofQtGlWidget::resizeEvent(QResizeEvent * event){
 }
 
 void ofQtGlWidget::mouseMoveEvent(QMouseEvent * event){
-    //TODO: Initialize with enable mouse tracking.
-    //      Default behavior for move event only triggered on button pressed...
-    const QPoint& pos = event->pos();
     appInterface->of_mouse_move(
-        pos.x(),
-        pos.y()
+        event->x(),
+        event->y()
+    );
+}
+
+void ofQtGlWidget::mousePressEvent(QMouseEvent * event){
+    Qt::MouseButton button = event->button();
+    appInterface->of_mouse_button(
+        button, 1,
+        event->x(),
+        event->y()
+    );
+}
+
+void ofQtGlWidget::mouseReleaseEvent(QMouseEvent * event){
+    Qt::MouseButton button = event->button();
+    appInterface->of_mouse_button(
+        button, 2,
+        event->x(),
+        event->y()
     );
 }
 

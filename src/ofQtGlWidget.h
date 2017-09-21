@@ -51,6 +51,8 @@ class ofQtGlWidget : public QGLWidget
         void resizeGL();
         void resizeEvent(QResizeEvent * event);
         void mouseMoveEvent(QMouseEvent * event);
+        void mousePressEvent(QMouseEvent * event);
+        void mouseReleaseEvent(QMouseEvent * event);
 
     private:
         QTimer _internal_timer;
