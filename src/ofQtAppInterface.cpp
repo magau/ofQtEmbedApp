@@ -15,7 +15,7 @@
 //#include <QtGui/QSizePolicy>
 //#include <QtCore/QString>
 #include <QtOpenGL/QGLFormat>
-#include <GL/glxext.h>
+//#include <GL/glxext.h>
 #include <GL/glx.h>
 #include <iostream>
 

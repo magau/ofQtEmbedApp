@@ -105,7 +105,7 @@ USER_LIBS+= -lQtGui -lQtCore -lQtOpenGL
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-# PROJECT_CFLAGS = 
+PROJECT_CFLAGS = -g
 
 ################################################################################
 # PROJECT OPTIMIZATION CFLAGS

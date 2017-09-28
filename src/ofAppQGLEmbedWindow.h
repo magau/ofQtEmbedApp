@@ -41,9 +41,9 @@ public:
 	void setWindowPosition(int x, int y);
 	void setWindowShape(int w, int h);
 
-	ofPoint		getWindowPosition();
-	ofPoint		getWindowSize();
-	ofPoint		getScreenSize();
+	glm::vec2       getWindowPosition();
+	glm::vec2       getWindowSize();
+	glm::vec2       getScreenSize();
 	
 	void			setOrientation(ofOrientation orientation);
 	ofOrientation	getOrientation();
@@ -56,7 +56,7 @@ public:
 	void		enableSetupScreen();
 	void		disableSetupScreen();
 
-	void		setVerticalSync(bool enabled);
+	//void		setVerticalSync(bool enabled);
 
 	ofCoreEvents & events();
 	shared_ptr<ofBaseRenderer> & renderer();

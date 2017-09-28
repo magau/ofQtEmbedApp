@@ -72,7 +72,7 @@ void ofAppQGLEmbedWindow::qtAppInit(int argc, char *argv[]) {
     }
     #endif
     static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
-    setVerticalSync(true);
+    //setVerticalSync(true);
 
 
 //----------------------
@@ -202,8 +202,8 @@ void ofAppQGLEmbedWindow::draw(){
 
 //------------------------------------------------------------
 void ofAppQGLEmbedWindow::close(){
-    events().notifyExit();
-    events().disable();
+    instance->events().notifyExit();
+    instance->events().disable();
     //#ifdef TARGET_LINUX
     //  glutLeaveMainLoop();
     //#else
@@ -224,12 +224,12 @@ void ofAppQGLEmbedWindow::setWindowTitle(string title){
 }
 
 //------------------------------------------------------------
-ofPoint ofAppQGLEmbedWindow::getWindowSize(){
-    return ofPoint(windowW, windowH, 0);
+glm::vec2 ofAppQGLEmbedWindow::getWindowSize(){
+    return {windowW, windowH};
 }
 
 //------------------------------------------------------------
-ofPoint ofAppQGLEmbedWindow::getWindowPosition(){
+glm::vec2 ofAppQGLEmbedWindow::getWindowPosition(){
     
     int x ,y;
     std::pair<int, int>win_pos = qtApp->get_window_pos();
@@ -238,20 +238,20 @@ ofPoint ofAppQGLEmbedWindow::getWindowPosition(){
     //std::cout << "x: " << x << " y: " << y << endl;
 
 if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-    return ofPoint(x,y,0);
+    return {x,y};
 }else{
-    return ofPoint(y,x,0);
+    return {y,x};
 }
 }
 
 //------------------------------------------------------------
-ofPoint ofAppQGLEmbedWindow::getScreenSize(){
+glm::vec2 ofAppQGLEmbedWindow::getScreenSize(){
     int width = windowW;
     int height = windowH;
     if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-        return ofPoint(width, height, 0);
+        return {width, height};
     }else{
-        return ofPoint(height, width, 0);
+        return {height, width};
     }
 }
 
@@ -353,41 +353,41 @@ void ofAppQGLEmbedWindow::disableSetupScreen(){
 bEnableSetupScreen = false;
 }
 
-//------------------------------------------------------------
-void ofAppQGLEmbedWindow::setVerticalSync(bool bSync){
-//----------------------------
-//--------------------------------------
-#ifdef TARGET_OSX
-//--------------------------------------
-    GLint sync = bSync == true ? 1 : 0;
-    CGLSetParameter (CGLGetCurrentContext(), kCGLCPSwapInterval, &sync);
-//--------------------------------------
-#endif
-//--------------------------------------
-
-//--------------------------------------
-#ifdef TARGET_LINUX
-//--------------------------------------
-    void (*swapIntervalExt)(Display *,GLXDrawable, int)  = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
-    if(swapIntervalExt){
-        Display *dpy = glXGetCurrentDisplay();
-        GLXDrawable drawable = glXGetCurrentDrawable();
-        if (drawable) {
-            swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
-            return;
-        }
-    }
-    void (*swapInterval)(int) = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
-    if(!swapInterval) {
-        swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
-    }
-    if(swapInterval) {
-        swapInterval(bSync ? 1 : 0);
-    }
-//--------------------------------------
-#endif
-//--------------------------------------
-}
+////------------------------------------------------------------
+//void ofAppQGLEmbedWindow::setVerticalSync(bool bSync){
+////----------------------------
+////--------------------------------------
+//#ifdef TARGET_OSX
+////--------------------------------------
+//    GLint sync = bSync == true ? 1 : 0;
+//    CGLSetParameter (CGLGetCurrentContext(), kCGLCPSwapInterval, &sync);
+////--------------------------------------
+//#endif
+////--------------------------------------
+//
+////--------------------------------------
+//#ifdef TARGET_LINUX
+////--------------------------------------
+//    void (*swapIntervalExt)(Display *,GLXDrawable, int)  = (void (*)(Display *,GLXDrawable, int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalEXT");
+//    if(swapIntervalExt){
+//        Display *dpy = glXGetCurrentDisplay();
+//        GLXDrawable drawable = glXGetCurrentDrawable();
+//        if (drawable) {
+//            swapIntervalExt(dpy, drawable, bSync ? 1 : 0);
+//            return;
+//        }
+//    }
+//    void (*swapInterval)(int) = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalSGI");
+//    if(!swapInterval) {
+//        swapInterval = (void (*)(int)) glXGetProcAddress((const GLubyte*) "glXSwapIntervalMESA");
+//    }
+//    if(swapInterval) {
+//        swapInterval(bSync ? 1 : 0);
+//    }
+////--------------------------------------
+//#endif
+////--------------------------------------
+//}
 
 //------------------------------------------------------------
 ofCoreEvents & ofAppQGLEmbedWindow::events(){
