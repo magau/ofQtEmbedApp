@@ -8,10 +8,12 @@ using namespace ofQt;
 
 ofQtGlWidget::ofQtGlWidget(QGLFormat format) : QGLWidget(format)
 {
+    std::cout << "aqui 0" << std::endl;
     /* Connect the internal timer to the method that will control the widget
      * redraw call.
      */
     connect(&_internal_timer, SIGNAL(timeout()), this, SLOT(updateGL()));
+    std::cout << "aqui 1" << std::endl;
 
     /* Set the refresh rate of the OpenGL window to be equal to
      * the monitor refresh rate, i.e., VSync.
@@ -115,6 +117,12 @@ void ofQtGlWidget::resizeEvent(QResizeEvent * event){
         size.height()
     );
 }
+
+//void ofQtGlWidget::closeEvent(QCloseEvent *event){
+//    appInterface->of_close();
+//    std::cout << "ofApp closed." << std::endl;
+//    event->accept();
+//}
 
 void ofQtGlWidget::mouseMoveEvent(QMouseEvent * event){
     appInterface->of_mouse_move(

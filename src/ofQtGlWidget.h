@@ -53,6 +53,7 @@ class ofQtGlWidget : public QGLWidget
         void mouseMoveEvent(QMouseEvent * event);
         void mousePressEvent(QMouseEvent * event);
         void mouseReleaseEvent(QMouseEvent * event);
+        //void closeEvent(QCloseEvent *event);
 
     private:
         QTimer _internal_timer;
