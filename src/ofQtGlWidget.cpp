@@ -6,14 +6,14 @@
 
 using namespace ofQt;
 
-ofQtGlWidget::ofQtGlWidget(QGLFormat format) : QGLWidget(format)
+ofQtGlWidget::ofQtGlWidget() : QGLWidget()
 {
-    std::cout << "aqui 0" << std::endl;
+    QGLFormat format = createOpenGLContextFormat();
+    QGLWidget::setFormat(format);
     /* Connect the internal timer to the method that will control the widget
      * redraw call.
      */
     connect(&_internal_timer, SIGNAL(timeout()), this, SLOT(updateGL()));
-    std::cout << "aqui 1" << std::endl;
 
     /* Set the refresh rate of the OpenGL window to be equal to
      * the monitor refresh rate, i.e., VSync.
@@ -57,6 +57,9 @@ QGLFormat ofQtGlWidget::createOpenGLContextFormat()
      * of OpenGL 3.0+
      */
     format.setVersion(3, 0);
+    format.setRgba(true);
+    format.setDoubleBuffer(true);
+    format.setDepth(true);
 
     return format;
 }

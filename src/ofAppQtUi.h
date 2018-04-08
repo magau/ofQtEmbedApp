@@ -53,10 +53,10 @@ public:
         horizontalLayout->addWidget(ofWindow);
 
         mainWindow->setCentralWidget(centralwidget);
-        menubar = new QMenuBar(mainWindow);
-        menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 448, 25));
-        mainWindow->setMenuBar(menubar);
+        //menubar = new QMenuBar(mainWindow);
+        //menubar->setObjectName(QString::fromUtf8("menubar"));
+        //menubar->setGeometry(QRect(0, 0, 448, 25));
+        //mainWindow->setMenuBar(menubar);
 
         retranslateUi(mainWindow);
 

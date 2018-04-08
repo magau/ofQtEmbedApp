@@ -58,9 +58,10 @@ ofAppQGLEmbedWindow::~ofAppQGLEmbedWindow(){
 void ofAppQGLEmbedWindow::qtAppInit(int argc, char *argv[]) {
     std::cout << "create qtApp..." << std::endl;
     qtApp = new ofQtAppInterface(argc, argv);
+    qtApp->setOfWindow(this);
     std::cout << "qtApp created - done." << std::endl;
     std::cout << "create embedWindow..." << std::endl;
-    this->windowId = qtApp->createEmbedWindow(this);
+    windowId = qtApp->createEmbedWindow();
     std::cout << "embedWindow created - done." << std::endl;
 
     currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));

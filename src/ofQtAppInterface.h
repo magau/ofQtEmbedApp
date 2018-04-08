@@ -21,12 +21,15 @@ class ofQtAppInterface{
     QMainWindow *mainWindow;
     Ui::mainWindow *ui;
     ofAppQGLEmbedWindow *ofWindow;
+    int appInterfaceArgc;
+    char *appInterfaceArgv[];
     public:
     ofQtGlWidget *embedWindow;
     ofQtAppInterface(int argc, char *argv[]);
     ~ofQtAppInterface();
     void setupUi();
-    ofQtGlWidget *createEmbedWindow(ofAppQGLEmbedWindow *ofWindow_ptr);
+    ofQtGlWidget *createEmbedWindow();
+    void setOfWindow(ofAppQGLEmbedWindow *ofWindow_ptr);
     void setup();
     void update();
     int exec();

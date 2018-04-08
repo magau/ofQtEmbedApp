@@ -10,7 +10,7 @@ public:
 	ofAppQGLEmbedWindow(int winW=1024, int winH=768, ofWindowMode winMode=OF_WINDOW);
 	~ofAppQGLEmbedWindow();
 
-	ofQtGlWidget *get_windowId(){ return windowId; };
+	ofQtGlWidget* get_windowId(){ return windowId; };
 	void qtAppInit(int argc, char *argv[]);
 	int qtAppExec(int argc, char *argv[]);
 

@@ -19,17 +19,25 @@
 #include <GL/glx.h>
 #include <iostream>
 
-ofQtAppInterface::ofQtAppInterface(int argc, char *argv[]) :
-                                  qt_app(new QApplication(argc, argv)),
-                                  of_app( new ofApp()),
-                                  mainWindow(new QMainWindow),
-                                  ui(new Ui::mainWindow) {
+#include <signal.h>
+#include <unistd.h>
 
-        cout << "argc: " << argc << endl;
-        vector<std::string> args(argv, argv + argc);
-        for (string& iarg : args){
-            cout << "argv: " << iarg << endl;
+ofQtAppInterface::ofQtAppInterface(int argc, char *argv[]) :
+                                  of_app( new ofApp()){//,
+                                  //qt_app(new QApplication(argc, argv)),
+                                  //mainWindow(new QMainWindow),
+                                  //ui(new Ui::mainWindow) {
+
+        
+        appInterfaceArgc = argc;
+        for (int i = 0; i < argc; i++){
+            appInterfaceArgv[i] = argv[i];
         }
+        //cout << "argc: " << argc << endl;
+        //vector<std::string> args(argv, argv + argc);
+        //for (string& iarg : args){
+        //    cout << "argv: " << iarg << endl;
+        //}
 
 }
 
@@ -55,15 +63,14 @@ void ofQtAppInterface::setupUi() {
      *
      * Comment the line where FcFini() function is called.
      */
-    std::cout << "call setupUi..." << std::endl;
-    ui->setupUi(mainWindow);
-    std::cout << "setupUi done." << std::endl;
+//    std::cout << "call setupUi..." << std::endl;
+//    ui->setupUi(mainWindow);
+//    std::cout << "setupUi done." << std::endl;
 
     /* Remove the ui->ofWindow QWidget, which was created
        by the ui->setupUi method. Replace it by the 
        'embedWindow' our QGLWidget derived class.
      */
-    std::cout << "Replace the ui->ofWindow (QWidget) by this->embedWindow (QGLWidget)..." << std::endl;
     embedWindow->setSizePolicy(ui->ofWindow->sizePolicy());
     //ui->horizontalLayout->removeWidget(ui->ofWindow);
     delete ui->ofWindow;
@@ -72,7 +79,6 @@ void ofQtAppInterface::setupUi() {
 
     mainWindow->resize(ofWindow->windowW,
                        ofWindow->windowH);   
-    std::cout << "ui->ofWindow replaced - done." << std::endl;
 }
 
 void ofQtAppInterface::of_resize(int w, int h){
@@ -100,7 +106,7 @@ void ofQtAppInterface::of_mouse_button(int button, int state, int x, int y){
 }
 
 void ofQtAppInterface::of_close(){
-    std::cout << "closing ofApp..." << std::endl;
+    //std::cout << "closing ofApp..." << std::endl;
     ofWindow->close();
 }
 
@@ -109,34 +115,32 @@ std::pair<int, int> ofQtAppInterface::get_window_pos(){
                                embedWindow->pos().y());
 }
 
-ofQtGlWidget *ofQtAppInterface::createEmbedWindow(ofAppQGLEmbedWindow *ofWindow_ptr){
-    std::cout << "ofWindow assignement..." << std::endl;
-    ofWindow = ofWindow_ptr;
-    QGLFormat format;
-    format.setVersion(3, 0);
-    format.setRgba(true);
-    format.setDoubleBuffer(true);
-    format.setDepth(true);
-    std::cout << "create ofQtGlWidget..." << std::endl;
-    ofQtGlWidget *embedWindow;
-    embedWindow = new ofQtGlWidget(format);
-    std::cout << "assigne ofQtGlWidget to embedWindow..." << std::endl;
-    this->embedWindow = embedWindow;
-    std::cout << "setAppInterface..." << std::endl;
+ofQtGlWidget *ofQtAppInterface::createEmbedWindow(){
+    //cout << "argc: " << appInterfaceArgc << endl;
+    //vector<std::string> args(appInterfaceArgv, appInterfaceArgv + appInterfaceArgc);
+    //for (string& iarg : args){
+    //    cout << "argv: " << iarg << endl;
+    //}
+
+    qt_app = new QApplication(appInterfaceArgc, appInterfaceArgv);
+    mainWindow = new QMainWindow;
+    ui = new Ui::mainWindow;
+    ui->setupUi(mainWindow);
+    embedWindow = new ofQtGlWidget();
     embedWindow->setAppInterface(this);
-    std::cout << "call embedWindow->makeCurrent()..." << std::endl;
     embedWindow->makeCurrent();
     return embedWindow; 
 }
+
+void ofQtAppInterface::setOfWindow(ofAppQGLEmbedWindow *ofWindow_ptr){
+    ofWindow = ofWindow_ptr;
+}
+
 void ofQtAppInterface::setup(){
-    //cout << "qtUi.setup()" << endl;
-    //cout << "W: " << (ofWindow->windowW) << "; H: " << (ofWindow->windowH) << endl;
     setupUi();
-    //cout << "embedWindow" << endl;
-    //cout << "W: " << (embedWindow->width()) << "; H: " << (embedWindow->height()) << endl;
-    of_app->setup();
     embedWindow->show();
     mainWindow->show();
+    of_app->setup();
 }
 
 int ofQtAppInterface::get_width(){

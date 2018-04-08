@@ -19,7 +19,7 @@ namespace ofQt {
 class ofQtGlWidget : public QGLWidget
 {
     public:
-        ofQtGlWidget(QGLFormat format);
+        ofQtGlWidget();
         ~ofQtGlWidget() {}
 
         /* Static function to create a new instance of the wanted OpenGL
